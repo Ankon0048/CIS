@@ -97,8 +97,16 @@
                                             <div class="input-group">
                                                 <input class="form-control" name="criminalNumber" type="text" id="TextBoxCriminalID" placeholder="Criminal ID" style="height: fit-content;">
                                             </div>
+                                            
                                         </div>
                                     </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="margin-top: 30px;">
+                                            <button class="btn btn-success" id="Find">Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6">
                                         <label>Name</label>
                                         <div class="form-group">
@@ -166,7 +174,7 @@
                                 <div class="row mt-3 mb-3">
                                     <div class="col">
                                         <label for="address">Detailed Address</label>
-                                        <textarea class="form-control"></textarea>
+                                        <textarea id="AddressTextBox" class="form-control"></textarea>
                                     </div>
                                 </div>
                                   <br>
@@ -359,6 +367,7 @@
                                 <div class="col-md-5">
                                     <label>Age</label>
                                     <div class="form-group">
+                                        <label style="display: none;" id="admin_id">{{ user.id }}</label>
                                         <input class="form-control" name="Age" type="text" min="1" id="TextBox11" placeholder="Age" >
                                     </div>
                                 </div>
@@ -549,6 +558,53 @@
       }
     }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var showMapLink = document.getElementById('Find');
+            var admin_id = 5
+            //var criminal_id = document.getElementById('TextBoxCriminalID').value;
+            var criminal_id = 8
+            console.log(`admin_id: ${admin_id}`);
+            console.log(`criminal_id ${criminal_id}`);
+
+            showMapLink.addEventListener('click', function (event) {
+                var criminal_id = document.getElementById('TextBoxCriminalID').value;
+                let url = `/arrest/${admin_id}/${criminal_id}/`;
+                fetch(url, {
+                    method: 'GET',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the values of input fields with new data
+                    console.log(`age: ${data.criminal_age}`);
+                    document.getElementById("TextBoxCriminalID").value = data.criminal_id;
+                    document.getElementById("TextBox2").value = data.criminal_name;
+                    document.getElementById("NIDTextBox").value = data.criminal_nid;
+                    document.getElementById("TextBox3").value = data.criminal_DOB;
+                    document.getElementById("TextBox4").value = data.criminal_email;
+                    document.getElementById("TextBox5").value = data.criminal_phone;
+                    document.getElementById("division").value = data.criminal_division;
+                    document.getElementById("district").value = data.criminal_district;
+                    document.getElementById("upazila").value = data.criminal_thana;
+                    document.getElementById("TextBox14").value = data.criminal_gender;
+                    document.getElementById("TextBox15").value = data.criminal_hair_color;
+                    document.getElementById("TextBox6").value = data.criminal_skin_tone;
+                    document.getElementById("TextBox7").value = data.criminal_hair_style;
+                    document.getElementById("TextBox8").value = data.criminal_hair_length;
+                    document.getElementById("TextBox11").value = data.criminal_age;
+                    document.getElementById("TextBox10").value = data.criminal_face_shape;
+                    document.getElementById("TextBox9").value = data.criminal_facial_hair;
+                    document.getElementById("TextBox12").value = data.criminal_height;
+                    document.getElementById("TextBox13").value = data.weight;
+                    document.getElementById("Description_distinguishing_marks").value = data.criminal_marks;
+                    document.getElementById("Type_of_distinguishing_marks").value = data.criminal_mark_type;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+        </script>
 <script>
         var gender = document.getElementById("TextBox14");
         var hairColor = document.getElementById("TextBox15");

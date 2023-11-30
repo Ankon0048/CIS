@@ -822,36 +822,6 @@ def new_filepath(filename):
     return os.path.join('uploads/',filename)
 
 def ArrestPage(request, admin_id, criminal_id=None):
-    if criminal_id:
-        criminal = get_object_or_404(CriminalProfile, criminal_number=criminal_id)
-        initial_data = {
-            'criminal_img': criminal.criminal_img,
-            'criminal_name': criminal.criminal_name,
-            'criminal_nid': criminal.criminal_nid,
-            'criminal_DOB': str(criminal.criminal_DOB),
-            'criminal_email': criminal.criminal_email,
-            'criminal_phone': criminal.criminal_phone,
-            'criminal_division': criminal.criminal_division,
-            'criminal_district': criminal.criminal_district,
-            'criminal_thana': criminal.criminal_thana,
-            'ArrestDate': criminal.criminal_arrest_date,
-            'ApprovedCharges': criminal.criminal_crimes,
-            'criminal_gender': criminal.criminal_gender,
-            'criminal_hair_color': criminal.criminal_hair_color,
-            'criminal_skin_tone': criminal.criminal_skin_tone,
-            'criminal_hair_style': criminal.criminal_hair_style,
-            'criminal_hair_length': criminal.criminal_hair_length,
-            'criminal_age': criminal.criminal_age,
-            'criminal_face_shape': criminal.criminal_face_shape,
-            'criminal_facial_hair': criminal.criminal_facial_hair,
-            'criminal_height': criminal.criminal_height,
-            'weight': criminal.criminal_weight,
-            'criminal_marks': criminal.criminal_marks,
-            'criminal_mark_type': criminal.criminal_mark_type,
-        }
-    else:
-        # If no criminal_id is provided, initialize empty data
-        initial_data = {}
     if request.method == 'POST':
         temp_img = request.FILES.get('FrontFacedImage')
         temp_name = request.POST.get('criminalName')
@@ -904,8 +874,40 @@ def ArrestPage(request, admin_id, criminal_id=None):
         )
         admin = AdminProfile.objects.get(id=admin_id)
         return  render(request, 'NewArrest.html',{'user': admin })
+    if criminal_id:
+        criminal = get_object_or_404(CriminalProfile, id=criminal_id)
+        # print(f'criminl_id is {criminal_id}')
+        # print(f'object fount at {criminal}')
+        if criminal:
+            return JsonResponse({
+                'criminal_id' : criminal.id,
+                #'criminal_img': criminal.criminal_img,
+                'criminal_name': criminal.criminal_name,
+                'criminal_nid': criminal.criminal_nid,
+                'criminal_DOB': str(criminal.criminal_DOB),
+                'criminal_email': criminal.criminal_email,
+                'criminal_phone': criminal.criminal_phone,
+                'criminal_division': criminal.criminal_division,
+                'criminal_district': criminal.criminal_district,
+                'criminal_thana': criminal.criminal_thana,
+                'criminal_gender': criminal.criminal_gender,
+                'criminal_hair_color': criminal.criminal_hair_color,
+                'criminal_skin_tone': criminal.criminal_skin_tone,
+                'criminal_hair_style': criminal.criminal_hair_style,
+                'criminal_hair_length': criminal.criminal_hair_length,
+                'criminal_age': criminal.criminal_age,
+                'criminal_face_shape': criminal.criminal_face_shape,
+                'criminal_facial_hair': criminal.criminal_facial_hair,
+                'criminal_height': criminal.criminal_height,
+                'weight': criminal.criminal_weight,
+                'criminal_marks': criminal.criminal_marks,
+                'criminal_mark_type': criminal.criminal_mark_type,
+            })
+        else:
+            admin = AdminProfile.objects.get(id=admin_id)
+            return render(request, 'NewArrest.html',{'user': admin })
     admin = AdminProfile.objects.get(id=admin_id)
-    return  render(request, 'NewArrest.html',{'user': admin })
+    return render(request, 'NewArrest.html',{'user': admin })
 
 def applyCISLoader(request):
     if request.method == 'POST':
