@@ -767,132 +767,7 @@
           <h2 class="text-center text-primary">Police FAQ</h2>
 
           <div class="accordion" id="faqAccordion">
-            <!-- FAQ Item 1 -->
-            <div class="card">
-              <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                  <button
-                    class="btn btn-link"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseOne"
-                    aria-expanded="true"
-                    aria-controls="collapseOne"
-                  >
-                    <span class="faq-question"
-                      >Q: What should I do in case of an emergency?</span
-                    >
-                  </button>
-                </h5>
-              </div>
-
-              <div
-                id="collapseOne"
-                class="collapse show"
-                aria-labelledby="headingOne"
-                data-parent="#faqAccordion"
-              >
-                <div class="card-body faq-answer">
-                  A: In case of an emergency, please dial 999 immediately.
-                </div>
-              </div>
-            </div>
-
-            <!-- FAQ Item 2 -->
-            <div class="card">
-              <div class="card-header" id="headingTwo">
-                <h5 class="mb-0">
-                  <button
-                    class="btn btn-link collapsed"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseTwo"
-                    aria-expanded="false"
-                    aria-controls="collapseTwo"
-                  >
-                    <span class="faq-question"
-                      >Q: How can I report a Crime situation?</span
-                    >
-                  </button>
-                </h5>
-              </div>
-              <div
-                id="collapseTwo"
-                class="collapse"
-                aria-labelledby="headingTwo"
-                data-parent="#faqAccordion"
-              >
-                <div class="card-body faq-answer">
-                  A: Go to our online GD section and fill out an FIR.Then Keep
-                  eyes on your dashboard for updates in your case.
-                </div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-header" id="headingThree">
-                <h5 class="mb-0">
-                  <button
-                    class="btn btn-link collapsed"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseThree"
-                    aria-expanded="false"
-                    aria-controls="collapseThree"
-                  >
-                    <span class="faq-question"
-                      >Q: Do I need an account to report my case?</span
-                    >
-                  </button>
-                </h5>
-              </div>
-              <div
-                id="collapseThree"
-                class="collapse"
-                aria-labelledby="headingThree"
-                data-parent="#faqAccordion"
-              >
-                <div class="card-body faq-answer">
-                  A: Yes, You will need to create an account in order to file a
-                  report as it helps us to verify you and the legitamacy of your
-                  case.
-                </div>
-              </div>
-            </div>
-
-            <!-- FAQ Item 4 -->
-            <div class="card">
-              <div class="card-header" id="headingFour">
-                <h5 class="mb-0">
-                  <button
-                    class="btn btn-link collapsed"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseFour"
-                    aria-expanded="false"
-                    aria-controls="collapseFour"
-                  >
-                    <span class="faq-question"
-                      >Q: How can I obtain a copy of a police report?</span
-                    >
-                  </button>
-                </h5>
-              </div>
-              <div
-                id="collapseFour"
-                class="collapse"
-                aria-labelledby="headingFour"
-                data-parent="#faqAccordion"
-              >
-                <div class="card-body faq-answer">
-                  A: To obtain a copy of a police report, you can visit our
-                  police station in person or submit a request through our
-                  online portal. Please check our Records Department page for
-                  detailed instructions.
-                </div>
-              </div>
-            </div>
-
-            <!-- FAQ Item 5 -->
+            {% for faq in faqs %}
             <div class="card">
               <div class="card-header" id="headingFive">
                 <h5 class="mb-0">
@@ -905,7 +780,7 @@
                     aria-controls="collapseFive"
                   >
                     <span class="faq-question"
-                      >Q: Can I talk to someone on my case?</span
+                      >Q: {{ faq.Ques }}?</span
                     >
                   </button>
                 </h5>
@@ -917,11 +792,12 @@
                 data-parent="#faqAccordion"
               >
                 <div class="card-body faq-answer">
-                  A: Yes, You can chat anonymously on our website with one of
-                  our agents to provide more information.
+                  A: {{ faq.Ans }}
                 </div>
               </div>
             </div>
+            {% endfor %}
+            <!-- FAQ Item 5 -->
             <!-- Add more FAQ items as needed -->
           </div>
         </div>
@@ -958,31 +834,11 @@
                         onmouseover="stop()"
                         onmouseout="start()"
                       >
+                      {% for notice in notices %}
                         <h6>
-                          <a href="#"
-                            >New Report <span class="pdf-icon">📄</span></a
-                          >
+                          <a href="{{ notice.pdf }}">{{ notice.title }} <span class="pdf-icon">📄</span></a>
                         </h6>
-                        <h6>
-                          <a href="#"
-                            >New Report <span class="pdf-icon">📄</span></a
-                          >
-                        </h6>
-                        <h6>
-                          <a href="#"
-                            >New Report <span class="pdf-icon">📄</span></a
-                          >
-                        </h6>
-                        <h6>
-                          <a href="#"
-                            >New Report <span class="pdf-icon">📄</span></a
-                          >
-                        </h6>
-                        <h6>
-                          <a href="#"
-                            >New Report <span class="pdf-icon">📄</span></a
-                          >
-                        </h6>
+                        {% endfor %}
                       </marquee>
                     </div>
                   </div>

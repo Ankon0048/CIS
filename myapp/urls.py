@@ -12,6 +12,7 @@ urlpatterns = [
     path('userhome/<int:user_id>/', views.UserHomePage, name = "UserHomePage"),
     path('adminhome/<int:user_id>/', views.AdminHomePage, name = "AdminHomePage"),
     path('arrest/<int:admin_id>/', views.ArrestPage, name = "ArrestPage"),
+    path('arrest/<int:admin_id>/<int:criminal_id>/', views.ArrestPage, name = "ArrestPage"),
     path('applyCIS/', views.applyCISLoader, name = "applyCISLoad"),
     path('criminalpage/<int:admin_id>', views.allCriminalPage, name = "CriminalPage"),
     path('criminalpage/', views.allCriminalPage, name = "CriminalPage"),

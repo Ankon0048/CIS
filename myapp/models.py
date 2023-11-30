@@ -313,3 +313,13 @@ class UserNotificationPanel(models.Model):
         hours, seconds = divmod(seconds, 3600)
         minutes, seconds = divmod(seconds, 60)
         return f"{days} days, {hours} hours, {minutes} minutes, {seconds} seconds Ago"
+    
+class Notice(models.Model):
+    title = models.CharField(max_length=255, blank=True)
+    pdf = models.FileField(upload_to=filepath, null=True, blank=True)
+    def __str__(self):
+        return self.title
+    
+class FAQ(models.Model):
+    Ques = models.CharField(max_length=255, blank=True)
+    Ans = models.CharField(max_length=255, blank=True)

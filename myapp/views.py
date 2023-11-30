@@ -11,7 +11,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from demo import settings
 from django.db.models import Q
-from .models import CriminalProfile,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
+from .models import CriminalProfile, Notice,FAQ,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
 from django.http import JsonResponse
 from .forms import RegistrationForm
 from .tokens import generate_token
@@ -126,7 +126,9 @@ def near_stations(request):
 
 # Create your views here.
 def home(request):
-    return render(request, "Welcome_Page.html")
+    notices = Notice.objects.all()
+    faqs = FAQ.objects.all()
+    return render(request, "Welcome_Page.html", {'notices': notices, 'faqs': faqs})
 
 def users(request):
     if request.method == 'POST':
@@ -819,7 +821,37 @@ def new_filepath(filename):
     filename = "%s%s" % (timeNow,old_filename)
     return os.path.join('uploads/',filename)
 
-def ArrestPage(request, admin_id):
+def ArrestPage(request, admin_id, criminal_id=None):
+    if criminal_id:
+        criminal = get_object_or_404(CriminalProfile, criminal_number=criminal_id)
+        initial_data = {
+            'criminal_img': criminal.criminal_img,
+            'criminal_name': criminal.criminal_name,
+            'criminal_nid': criminal.criminal_nid,
+            'criminal_DOB': str(criminal.criminal_DOB),
+            'criminal_email': criminal.criminal_email,
+            'criminal_phone': criminal.criminal_phone,
+            'criminal_division': criminal.criminal_division,
+            'criminal_district': criminal.criminal_district,
+            'criminal_thana': criminal.criminal_thana,
+            'ArrestDate': criminal.criminal_arrest_date,
+            'ApprovedCharges': criminal.criminal_crimes,
+            'criminal_gender': criminal.criminal_gender,
+            'criminal_hair_color': criminal.criminal_hair_color,
+            'criminal_skin_tone': criminal.criminal_skin_tone,
+            'criminal_hair_style': criminal.criminal_hair_style,
+            'criminal_hair_length': criminal.criminal_hair_length,
+            'criminal_age': criminal.criminal_age,
+            'criminal_face_shape': criminal.criminal_face_shape,
+            'criminal_facial_hair': criminal.criminal_facial_hair,
+            'criminal_height': criminal.criminal_height,
+            'weight': criminal.criminal_weight,
+            'criminal_marks': criminal.criminal_marks,
+            'criminal_mark_type': criminal.criminal_mark_type,
+        }
+    else:
+        # If no criminal_id is provided, initialize empty data
+        initial_data = {}
     if request.method == 'POST':
         temp_img = request.FILES.get('FrontFacedImage')
         temp_name = request.POST.get('criminalName')
