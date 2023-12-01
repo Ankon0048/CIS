@@ -873,7 +873,8 @@ def ArrestPage(request, admin_id, criminal_id=None):
             criminal_mark_type = temp_disguish,
         )
         admin = AdminProfile.objects.get(id=admin_id)
-        return  render(request, 'NewArrest.html',{'user': admin })
+        fir_numbers = CASE_FIR.objects.all()
+        return  render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
     if criminal_id:
         criminal = get_object_or_404(CriminalProfile, id=criminal_id)
         # print(f'criminl_id is {criminal_id}')
@@ -905,9 +906,11 @@ def ArrestPage(request, admin_id, criminal_id=None):
             })
         else:
             admin = AdminProfile.objects.get(id=admin_id)
-            return render(request, 'NewArrest.html',{'user': admin })
+            fir_numbers = CASE_FIR.objects.all()
+            return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
     admin = AdminProfile.objects.get(id=admin_id)
-    return render(request, 'NewArrest.html',{'user': admin })
+    fir_numbers = CASE_FIR.objects.all()
+    return  render(request, 'NewArrest.html',{'user': admin,'fir_numbers':fir_numbers })
 
 def applyCISLoader(request):
     if request.method == 'POST':
