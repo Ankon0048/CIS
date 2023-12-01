@@ -823,6 +823,7 @@ def new_filepath(filename):
 
 def ArrestPage(request, admin_id, criminal_id=None):
     if request.method == 'POST':
+        print("CALLING POST UNNESSACRIFKAJFJ")
         temp_img = request.FILES.get('FrontFacedImage')
         temp_name = request.POST.get('criminalName')
         temp_nid = request.POST.get('criminalNID')
@@ -851,7 +852,7 @@ def ArrestPage(request, admin_id, criminal_id=None):
             criminal_img=temp_img,
             criminal_name=temp_name,
             criminal_nid=temp_nid,  # Assuming color corresponds to hair color
-            criminal_DOB=temp_dob,
+            #criminal_DOB=temp_dob,
             criminal_email = temp_email,
             criminal_phone = temp_contactno,
             criminal_division = temp_division,
@@ -874,10 +875,10 @@ def ArrestPage(request, admin_id, criminal_id=None):
         )
         admin = AdminProfile.objects.get(id=admin_id)
         fir_numbers = CASE_FIR.objects.all()
-        return  render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
+        return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
     if criminal_id:
         criminal = get_object_or_404(CriminalProfile, id=criminal_id)
-        # print(f'criminl_id is {criminal_id}')
+        print(f'criminl_id is {criminal_id}')
         # print(f'object fount at {criminal}')
         if criminal:
             return JsonResponse({
@@ -910,6 +911,7 @@ def ArrestPage(request, admin_id, criminal_id=None):
             return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
     admin = AdminProfile.objects.get(id=admin_id)
     fir_numbers = CASE_FIR.objects.all()
+    print("Without criminal_id Find")
     return  render(request, 'NewArrest.html',{'user': admin,'fir_numbers':fir_numbers })
 
 def applyCISLoader(request):
