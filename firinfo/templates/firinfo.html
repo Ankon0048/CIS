@@ -347,7 +347,34 @@
                                 </div>
                             </div>
                         </form>
-                        {% endif %}                   
+                        {% elif user.roles == 'User' and case_info.case_status == 'Accepted' %}
+                            {% if potential_suspects %}
+                                {% for obj in potential_suspects %}
+                                    {% for individual_obj in obj %}
+                                    <div class="col my-auto">
+                                        <div class="card" style="width: 15rem;">
+                                            <img class="card-img-top" src="{% if individual_obj.criminal_img.url %}{{ individual_obj.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ individual_obj.criminal_name }}</h5>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">{{ individual_obj.criminal_nid }}</li>
+                                            </ul>
+                                            <div class="card-body">
+                                                <span>Percentage of matching:</span>
+                                                <br>
+                                                <!-- <button class="btn btn-success" type="submit">Accept</button> -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                    <br>
+                                {% endfor %}
+                            {% else %}
+                            <p>No matches Found</p>
+                            {% endif %}
+                            Update
+                        {% endif %}              
                     </div>
                 </div>
             </div>

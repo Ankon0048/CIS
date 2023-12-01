@@ -391,7 +391,6 @@ def fetch_user_data(request):
         data = {
             'message': 'User not found',
         }
-
     return JsonResponse(data)
 
 def complain1(request,user_id,FIR_id):
