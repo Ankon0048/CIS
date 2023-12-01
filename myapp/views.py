@@ -693,7 +693,7 @@ def complain4(request,user_id,FIR_id):
         )
 
         response.write(pdf_data)
-        return redirect(reverse('page5Fir', args=[user_id,FIR_id]))
+        #return redirect(reverse('page5Fir', args=[user_id,FIR_id]))
         #return redirect(reverse('UserHomePage', args=[user_id]))  
         #write code to generate a pdf containg the information (here) of the form and then view the pdf in another window 
         #return redirect(reverse('UserHomePage', args=[user_id]))    

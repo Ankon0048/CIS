@@ -109,11 +109,11 @@
                           </div>
                         </td>
                         <td class="align-middle text-center text-sm">
-                          {% if case.case_status == 'Pending' %}
+                          {% if case.case_status == 'Pending' or case.case_status == 'Rejected' %}
                           <span class="badge badge-sm bg-gradient-Pending">{{ case.case_status }}</span>
                           {% elif case.case_status == 'On Going' %}
                             <span class="badge badge-sm bg-gradient-OnGoing">{{ case.case_status }}</span>
-                          {% elif case.case_status == 'Completed' %}
+                          {% elif case.case_status == 'Completed' or case.case_status == 'Accepted' %}
                             <span class="badge badge-sm bg-gradient-success">{{ case.case_status }}</span>
                           {% endif %}
                         </td>

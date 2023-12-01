@@ -1,24 +1,66 @@
 {% extends "user_base.html" %}
 {% load static %}
-{% block ProfilerType %}Admin{% endblock %}
+{% block ProfilerType %}
+    {% if user.roles == 'Admin' %}
+    Admin
+    {% else %}
+    User
+    {% endif %}
+{% endblock %}
     {% block Pagetitle %}Dashboard{% endblock %}
 
     {% block newFir_active %}active{% endblock %}
 
-    {% block sidebar_item2 %}Details{% endblock %}
+    {% block sidebar_item2 %}
+        {% if user.roles == 'Admin' %}
+            New Arrest
+        {% else %}
+            New Charge-Sheet
+        {% endif %}
+    {% endblock %}
 
-    {% block sidebar_item3 %}Criminal Records{% endblock %}
-    {% block sidebar_item4 %}Approve Applications{% endblock %}
-
+    {% block sidebar_item3 %}
+    {% if user.roles == 'Admin' %}
+    Criminal Records
+    {% else %}
+    Application Request
+    {% endif %}
+    {% endblock %}
+    {% block sidebar_item4 %}
+    {% if user.roles == 'Admin' %}
+    Approve Applications
+    {% else %}
+    Emergency
+    {% endif %}
+    {% endblock %}
     {% block UserDetails %}
+    {% if user.roles == 'Admin' %}
     <i class="fa fa-user me-sm-1"></i>
     <span class="d-sm-inline d-none">Admin</span>
+    {% else %}
+    <img src="{% if user.profile_image %}{{ user.profile_image.url }}{% else %}{% static 'img/Comoon_People.webp' %}{% endif %}" alt="" style="width: 50px; border-radius: 100%;">
+    <span class="d-sm-inline d-none">{{ user.name }}</span>
+    {% endif %}
     {% endblock %}
     {% block sidevar_1 %}
-    {% url 'AdminHomePage' user.id %}
+        {% if user.roles == 'Admin' %}
+            {% url 'AdminHomePage' user.id %}
+        {% else %}
+            {% url 'UserHomePage' user.id %}
+        {% endif %}
+    {% endblock %}
+    {% block sidevar_2 %}
+        {% if user.roles == 'Admin' %}
+            {% url 'ArrestPage' user.id %}
+        {% else %}
+            {% url 'UseComplainPage1' user.id 0%}
+        {% endif %}
     {% endblock %}
     {% block sidevar_3 %}
-    {% url 'CriminalPage' user.id %}
+        {% if user.roles == 'Admin' %}
+            {% url 'CriminalPage' user.id %}
+        {% else %}
+    {% endif %}
     {% endblock %}
     {% block sidevar_4 %}
 
@@ -282,24 +324,30 @@
                             </div>
                         </div>
                         <!-- END -->
-
                         <!-- next start the picture of the criminal -->
-                        <form method="post"  enctype="multipart/form-data">
+                        {% if user.roles == 'Admin' %}
+                        <form method="post" action="{% url 'firinfo' case_info.id user.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
+                            <div class="row">
+                                <label style="margin-top: 10px; margin-left: 310px;" for="feedback_message">Feedback Message:</label>
+                                <div class="form-group d-flex justify-content-center">
+                                    <textarea style="width: 600px;" class="form-control" name="feedback_message" id="feedback_message" cols="30" rows="2"></textarea>
+                                </div>
+                            </div>
                             <div class="row d-flex justify-content-center">
-                                <div class="col text-center">
-                                    <button type="submit" name="action" value="accept" class="btn btn-success">
+                                <div class="col text-center " style="margin-top: 20px;">
+                                    <button type="submit" name="stat-btn" value="accept" class="btn btn-success m-auto">
                                         Accept
                                     </button>
                                 </div>
-                                <div class="col text-center">
-                                    <button type="submit" name="action" value="reject" class="btn btn-danger">
+                                <div class="col text-center" style="margin-top: 20px;">
+                                    <button type="submit" name="stat-btn" value="reject" class="btn btn-danger m-auto">
                                         Reject
                                     </button>
                                 </div>
                             </div>
                         </form>
-                                               
+                        {% endif %}                   
                     </div>
                 </div>
             </div>

@@ -38,6 +38,11 @@ class victimInfo(models.Model):
     profile_image = models.ImageField(upload_to=filepath, null=True, blank=True)
 
 class UserProfile(models.Model):
+    ROLES_CHOICES = [
+        ('Admin', 'Admin'),
+        ('User', 'User')
+    ]
+    roles = models.CharField(max_length=255, choices=ROLES_CHOICES, default='Admin')
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)  # You should hash passwords
@@ -83,6 +88,8 @@ class CASE_FIR(models.Model):
         ('Pending', 'Pending'),
         ('On Going', 'On Going'),
         ('Completed', 'Completed'),
+        ('Rejected', 'Rejected'),
+        ('Accepted', 'Accepted'),
     ]
     case_status = models.CharField(max_length=255,choices=Status_CHOICES,default='Pending')
     victim_name = models.ForeignKey(
@@ -224,6 +231,11 @@ class DistrictNames(models.Model):
         return self.district
 
 class AdminProfile(models.Model):
+    ROLES_CHOICES = [
+        ('Admin', 'Admin'),
+        ('User', 'User')
+    ]
+    roles = models.CharField(max_length=255, choices=ROLES_CHOICES, default='Admin')
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
@@ -297,7 +309,8 @@ class UserNotificationPanel(models.Model):
         on_delete=models.CASCADE,
         blank=True,
     )
-    Title = models.CharField(max_length=50,null=True)
+    Title = models.CharField(max_length=255,null=True)
+    noti_message = models.CharField(max_length=255,null=True,blank=True)
     noti_image = models.ImageField(upload_to=filepath, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

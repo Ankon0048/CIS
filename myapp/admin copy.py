@@ -1,6 +1,6 @@
 from django.contrib import admin
 # Register your models here.
-from .models import CriminalProfile,UserTable,Notice,FAQ, UserProfile, MapMarker, AdminProfile, DistrictNames,  victimInfo,witnessInfo,Case_related,PhysicalStructure, CASE_FIR,Crimetype,Relation
+from .models import UserNotificationPanel, CriminalProfile,UserTable,Notice,FAQ, UserProfile, MapMarker, AdminProfile, DistrictNames,  victimInfo,witnessInfo,Case_related,PhysicalStructure, CASE_FIR,Crimetype,Relation
 admin.site.register(UserTable)
 admin.site.register(UserProfile)
 admin.site.register(AdminProfile)
@@ -16,3 +16,4 @@ admin.site.register(Relation)
 admin.site.register(CriminalProfile)
 admin.site.register(Notice)
 admin.site.register(FAQ)
+admin.site.register(UserNotificationPanel)
