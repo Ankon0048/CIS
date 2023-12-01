@@ -200,7 +200,11 @@
                       <td>
                         <div class="d-flex px-2">
                           <div>
+                            {% if criminal.criminal_img %}
                             <img src="{{ criminal.criminal_img.url }}" class="avatar avatar-sm rounded-circle me-2 criminal-img" alt="spotify">
+                            {% else %}
+                            <img src="E:\kosom django final system\CIS-System-Project-main\media\uploads\asd.png" class="avatar avatar-sm rounded-circle me-2 criminal-img" alt="spotify">
+                            {% endif %}
                           </div>
                           <div class="my-auto">
                             <h6 class="mb-0 text-sm criminal-name">{{ criminal.criminal_name }}</h6>
