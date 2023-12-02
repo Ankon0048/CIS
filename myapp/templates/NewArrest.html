@@ -36,7 +36,7 @@
 
     {% block sidebar_item2 %}New Arrest{% endblock %}
     {% block sidebar_item3 %}Criminal Records{% endblock %}
-    {% block sidebar_item4 %}Approve Applications{% endblock %}
+    {% block sidebar_item4 %}Emergency{% endblock %}
 
     {% block UserDetails %}
     <i class="fa fa-user me-sm-1"></i>
@@ -68,10 +68,14 @@
                                     <div class="col-md-4"> 
                                     </div>
                                     <div class="col-md-4">
-                                        <div id="imageContainer2" style="cursor: pointer; border: 1px dotted #1c2247;">
-                                            <img width="100px" src="{% static 'images/logo/—Pngtree—vector add icon_4232053.png' %}"  id="imgview2" />
-                                            <input class="form-control" name="FrontFacedImage" type="file" id="FileUpload2" onchange="readURL(this, 'imgview2');" style="display: none;">
-                                        </div>   
+                                        <div id="imageContainer2" style="cursor: pointer; width: 102px; border:1px solid #1c2247;">
+                                            {% if criminal_info.criminal_img %}
+                                                <img width="100px" src="{{ criminal_info.criminal_img.url }}" id="imgview5"/>
+                                            {% else %}
+                                                <img width="100px" src="{% static 'images/logo/—Pngtree—vector add icon_4232053.png' %}"  id="imgview2" />
+                                                <input class="form-control" name="FrontFacedImage" type="file" id="FileUpload2" onchange="readURL(this, 'imgview2');" style="display: none;">
+                                            {% endif %}
+                                            </div>   
                                     </div>
                                     <div class="col-md-4"> 
                                     </div>
@@ -95,7 +99,7 @@
                                         <label>Criminal ID</label>
                                         <div class="form-group">
                                             <div class="input-group">
-                                                <input class="form-control" name="criminalNumber" type="text" id="TextBoxCriminalID" placeholder="Criminal ID" style="height: fit-content;">
+                                                <input class="form-control" name="criminalNumber" type="text" id="TextBoxCriminalID" placeholder="Criminal ID" style="height: fit-content;" value="{{ criminal_info.id }}">
                                             </div>
                                         </div>
                                     </div>
@@ -105,7 +109,7 @@
                                     <div class="col-md-6">
                                         <label>Name</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalName" type="text" id="TextBox2" placeholder="Name">
+                                            <input class="form-control" name="criminalName" type="text" id="TextBox2" placeholder="Name" value="criminal_info.criminal_name">
                                         </div>
                                     </div>
                                 </div>
@@ -114,13 +118,13 @@
                                     <div class="col-md-6">
                                         <label >National Identification Number</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalNID" type="text" id="NIDTextBox" placeholder="NID">
+                                            <input class="form-control" name="criminalNID" type="text" id="NIDTextBox" placeholder="NID" value="criminal_info.criminal_nid">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <label >Date of Birth</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminaldob" type="date" id="TextBox3" placeholder="DOB">
+                                            <input class="form-control" name="criminaldob" type="date" id="TextBox3" placeholder="DOB" value="criminal_info.criminal_DOB">
                                         </div>
                                     </div>
                                 </div>
@@ -129,13 +133,13 @@
                                     <div class="col-md-6">
                                         <label>Email</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalEmail" type="email" id="TextBox4" placeholder="Email Address">
+                                            <input class="form-control" name="criminalEmail" type="email" id="TextBox4" placeholder="Email Address" value="criminal_info.criminal_email">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label>Phone</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalContactNo" type="text" id="TextBox5" placeholder="Contact No" >
+                                            <input class="form-control" name="criminalContactNo" type="text" id="TextBox5" placeholder="Contact No" value="criminal_info.criminal_phone">
                                         </div>
                                     </div>
                                 </div>
@@ -143,7 +147,7 @@
                                 <div class="row">
                                     <label for="">Permanent Address</label>
                                     <div class="col-md-4">
-                                      <select id="division" onchange="updateDistricts()" class="form-control" name="criminalDivision">
+                                      <select id="division" onchange="updateDistricts()" class="form-control" name="criminalDivision" value="criminal_info.criminal_division">
                                         <option value="">Division</option>
                                         <option value="dhaka">Dhaka</option>
                                         <option value="chittagong">Chittagong</option>
@@ -156,12 +160,12 @@
                                       </select>
                                     </div>
                                     <div class="col-md-4">
-                                      <select id="district" onchange="updateUpazilas()" class="form-control" name="criminalDistrict">
+                                      <select id="district" onchange="updateUpazilas()" class="form-control" name="criminalDistrict" value="criminal_info.criminal_district">
                                           <option value="">Select District</option>
                                       </select>
                                     </div>
                                     <div class="col-md-4">
-                                      <select id="upazila" class="form-control" name="criminalupazila">
+                                      <select id="upazila" class="form-control" name="criminalupazila" value="criminal_info.criminal_thana">
                                           <option value="">Select Thana</option>
                                       </select>
                                     </div>
@@ -169,7 +173,7 @@
                                 <div class="row mt-3 mb-3">
                                     <div class="col">
                                         <label for="address">Detailed Address</label>
-                                        <textarea id="AddressTextBox" class="form-control"></textarea>
+                                        <textarea name="AddressTextBox" id="AddressTextBox" class="form-control" value="criminal_info.criminal_detail_address" ></textarea>
                                     </div>
                                 </div>
                                   <br>
@@ -205,29 +209,7 @@
                                         <label>Approved Charges</label>
                                         <div class="form-group">
                                             <select class="form-control" id="ListBox1" multiple size="4" name="ApprovedCharges">
-                                                <option value="Arson">Arson</option>
-                                                <option value="Assault">Assault</option>
-                                                <option value="Burglary">Burglary</option>
-                                                <option value="Carjacking">Carjacking</option>
-                                                <option value="CyberCrime">Cyber Crime</option>
-                                                <option value="DomesticViolence">Domestic Violence</option>
-                                                <option value="EveTeasing">Eve Teasing</option>
-                                                <option value="Felony">Felony</option>
-                                                <option value="Forgery">Forgery</option>
-                                                <option value="Fraud">Fraud</option>
-                                                <option value="Harassment">Harassment</option>
-                                                <option value="HitAndRun">Hit & Run</option>
-                                                <option value="HumanTrafficking">Human Trafficking</option>
-                                                <option value="Kidnapping">Kidnapping</option>
-                                                <option value="Molesting">Molesting</option>
-                                                <option value="Murder">Murder</option>
-                                                <option value="Plagiarism">Plagiarism</option>
-                                                <option value="PropertyDamage">Property Damage</option>
-                                                <option value="Rape">Rape</option>   
-                                                <option value="Robbery">Robbery</option>
-                                                <option value="Shoplifting">Shoplifting</option>
-                                                <option value="Stalking">Stalking</option> 
-                                                <option value="Vandalism">Vandalism</option>                                         
+                                                                                      
                                             </select>
                                         </div>
                                     </div>
@@ -265,44 +247,33 @@
                                     <div class="col-md-4">
                                         <label for="">Arrest Date</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="ArrestDate" type="date" id="Judgementdate">
+                                            <input class="form-control" name="ArrestDate" type="date" id="Judgementdate" value="criminal_info.criminal_arrest_date">
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
-                                        <label for="">FIR#</label>
-                                        <select required class="form-select form-select-sm" aria-label=".form-select-sm example"  name="FIRno" id="FIRno" style="font-size: medium;">
-                                            {% for fir_number in fir_numbers %}
-                                            <option value="{{ fir_number.id }}">{{ fir_number.id }}</option>
-                                            {% endfor %}
-                                        </select>
+                                    <div class="col-md-6">
+                                        <label>FIR#</label>
+                                        <div class="form-group">
+                                            <select class="form-control" id="FIRno" multiple size="4" name="FIRno">
+                                                {% for fir_number in fir_numbers %}
+                                                    <option value="{{ fir_number.id  }}">{{ fir_number.id }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Proposed Charges</label>
                                         <div class="form-group">
                                             <select class="form-control" id="ListBox1" multiple size="4" name="ApprovedCharges">
-                                                <option value="Arson">Arson</option>
-                                                <option value="Assault">Assault</option>
-                                                <option value="Burglary">Burglary</option>
-                                                <option value="Carjacking">Carjacking</option>
-                                                <option value="CyberCrime">Cyber Crime</option>
-                                                <option value="DomesticViolence">Domestic Violence</option>
-                                                <option value="EveTeasing">Eve Teasing</option>
-                                                <option value="Felony">Felony</option>
-                                                <option value="Forgery">Forgery</option>
-                                                <option value="Fraud">Fraud</option>
-                                                <option value="Harassment">Harassment</option>
-                                                <option value="HitAndRun">Hit & Run</option>
-                                                <option value="HumanTrafficking">Human Trafficking</option>
-                                                <option value="Kidnapping">Kidnapping</option>
-                                                <option value="Molesting">Molesting</option>
-                                                <option value="Murder">Murder</option>
-                                                <option value="Plagiarism">Plagiarism</option>
-                                                <option value="PropertyDamage">Property Damage</option>
-                                                <option value="Rape">Rape</option>   
-                                                <option value="Robbery">Robbery</option>
-                                                <option value="Shoplifting">Shoplifting</option>
-                                                <option value="Stalking">Stalking</option> 
-                                                <option value="Vandalism">Vandalism</option>                                         
+                                                {% for crime_type in crime_types %}
+                                                    {% for crime in criminal_info.criminal_crimes.all %}
+                                                        {% if crime == crime_type %}
+                                                            <option selected value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
+                                                            {% break %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {% continue %}
+                                                    <option value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -315,13 +286,13 @@
                                 <div class="col-md-5">
                                     <label>Gender</label>
                                     <div class="form-group">
-                                        <input class="form-control" name="gender" type="text" id="TextBox14" placeholder="Gender" >
+                                        <input class="form-control" name="gender" type="text" id="TextBox14" placeholder="Gender" value="{{ criminal_info.criminal_gender }}" >
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label>Hair Color</label>
                                     <div class="form-group">
-                                        <input class="form-control" name="hairColor" type="text" id="TextBox15" placeholder="Hair Color"  >
+                                        <input class="form-control" name="hairColor" type="text" id="TextBox15" placeholder="Hair Color"  value="{{ criminal_info.criminal_hair_color }}">
                                     </div>
                                 </div>
                             </div>
@@ -330,13 +301,13 @@
                                 <div class="col-md-5">
                                     <label>Skin Tone</label>
                                     <div class="form-group">
-                                        <input class="form-control" type="text" name="skinTone" id="TextBox6" placeholder="Skin Tone" >
+                                        <input class="form-control" type="text" name="skinTone" id="TextBox6" placeholder="Skin Tone" value="{{ criminal_info.criminal_skin_tone }}">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label>Hair Style</label>
                                     <div class="form-group">
-                                        <input class="form-control" type="text" id="TextBox7" name="hairStyle" placeholder="Hair Style" >
+                                        <input class="form-control" type="text" id="TextBox7" name="hairStyle" placeholder="Hair Style" value="{{ criminal_info.criminal_hair_style }}">
                                     </div>
                                 </div>
                             </div>
@@ -345,13 +316,13 @@
                                 <div class="col-md-5">
                                     <label>Hair Length</label>
                                     <div class="form-group">
-                                        <input class="form-control" type="text" id="TextBox8" name="hairLength" placeholder="Hair Length" >
+                                        <input class="form-control" type="text" id="TextBox8" name="hairLength" placeholder="Hair Length" value="{{ criminal_info.criminal_hair_length }}">
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label>Facial Hair</label>
                                     <div class="form-group">
-                                        <input class="form-control" type="text" id="TextBox9" name="FacialHair" placeholder="Facial Hair" >
+                                        <input class="form-control" type="text" id="TextBox9" name="FacialHair" placeholder="Facial Hair" value="{{ criminal_info.criminal_facial_hair }}">
                                     </div>
                                 </div>
                             </div>
@@ -360,14 +331,14 @@
                                 <div class="col-md-5">
                                     <label>Face Shape</label>
                                     <div class="form-group">
-                                        <input class="form-control" type="text" name="faceShape" id="TextBox10" placeholder="Face Shape" >
+                                        <input class="form-control" type="text" name="faceShape" id="TextBox10" placeholder="Face Shape" value="{{ criminal_info.criminal_face_shape }}" >
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <label>Age</label>
                                     <div class="form-group">
                                         <label style="display: none;" id="admin_id">{{ user.id }}</label>
-                                        <input class="form-control" name="Age" type="text" min="1" id="TextBox11" placeholder="Age" >
+                                        <input class="form-control" name="Age" type="text" min="1" id="TextBox11" placeholder="Age" value="{{ criminal_info.criminal_age }}">
                                     </div>
                                 </div>
                             </div>
@@ -376,13 +347,13 @@
                                 <div class="col-md-4">
                                     <label>Height (cm)</label>
                                     <div class="form-group">
-                                        <input class="form-control" name="height" type="text" id="TextBox12" placeholder="Height(cm)" >
+                                        <input class="form-control" name="height" type="text" id="TextBox12" placeholder="Height(cm)" value="{{ criminal_info.criminal_height }}">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <label>Weight (kg)</label>
                                     <div class="form-group">
-                                        <input class="form-control" name="weight" type="text" id="TextBox13" placeholder="Weight(kg)" >
+                                        <input class="form-control" name="weight" type="text" id="TextBox13" placeholder="Weight(kg)" value="{{ criminal_info.criminal_weight }}">
                                     </div>
                                 </div>                                    
                             </div>
@@ -396,7 +367,7 @@
                                         </div>
                                     </div>
                                     <div class="row" style="margin: 10px;">
-                                            <select id="Type_of_distinguishing_marks" class="form-control" style="display: none;" name="Disguish">
+                                            <select id="Type_of_distinguishing_marks" class="form-control" style="display: none;" name="Disguish" value="{{ criminal_info.criminal_mark_type }}">
                                               <option value="">Type of Marks</option>
                                               <option value="Scars">Scars</option>
                                               <option value="Tattoos">Tattoos</option>
@@ -407,7 +378,7 @@
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <textarea class="form-control" name="detailsDisguis" id="Description_distinguishing_marks" placeholder="Description of the mark" rows="3" style="display: none;"></textarea>
+                                        <textarea class="form-control" name="detailsDisguis" id="Description_distinguishing_marks" placeholder="Description of the mark" rows="3" style="display: none;" value="{{ criminal_info.criminal_marks }}"></textarea>
                                     </div>
                                 </div>
                             </div>   
@@ -422,15 +393,7 @@
                             </div>                       
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col">
-                            
-                            <hr>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-10">
-                        </div>
+                    <div class="row" style="display: flex; justify-content: center;">
                         <div class="col-2">
                             <button type="submit" class="btn btn-lg btn-block btn-danger" id="Button2" onclick="submitForm()">Submit</button>
                         </div>

@@ -29,7 +29,10 @@
     {% url 'ArrestPage' user.id %}
     {% endblock %}
     {% block sidebar_item3 %}Criminal Records{% endblock %}
-    {% block sidebar_item4 %}Approve Applications{% endblock %}
+    {% block sidebar_item4 %}Emergency{% endblock %}
+    {% block sidevar_4 %}
+    {% url 'emergency' user.id %}
+    {% endblock %}
     {% block sidebar_item5_details %}          
     {% endblock %}
 
@@ -186,7 +189,7 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Criminal ID</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Age</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Phone</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Previous Crimes</th>
                     </tr>
                   </thead>
@@ -212,11 +215,9 @@
                         </div>
                       </td>
                       <td>
-                        <p class="text-sm font-weight-bold mb-0 criminal-phone" style="display: none;">{{ criminal.criminal_phone }}</p>
-                        <p class="text-sm font-weight-bold mb-0 criminal-phone">{{ criminal.calculate_age }}</p>
+                        <p class="text-sm font-weight-bold mb-0 criminal-phone">{{ criminal.criminal_phone }}</p>
                       </td>
                       <td>
-                        <p class="criminal-actual-age" style="display: none;">{{ criminal.calculate_age }}</p>
                         <p class="criminal-gender" style="display: none;">{{ criminal.criminal_gender }}</p>
                         <p class="criminal-nid" style="display: none;">{{ criminal.criminal_nid }}</p>
                         <p class="criminal-email" style="display: none;">{{ criminal.criminal_email }}</p>
@@ -231,15 +232,17 @@
                         <p class="criminal-faceshape" style="display: none;">{{ criminal.criminal_face_shape }}</p>
                         <p class="criminal-facialhair" style="display: none;">{{ criminal.criminal_facial_hair }}</p>
                         <p class="criminal-mark" style="display: none;">{{ criminal.criminal_marks }} - {{ criminal.criminal_mark_type }}</p>
-                      </td>
-                      <td>
-                        <span class="text-xs font-weight-bold">Murder, Felony, Rape, Cyber Crime, Fraud, Property Damage, Hit & Run</span>
+                        <span class="text-xs font-weight-bold">
+                          {% for crime_type in criminal.criminal_crimes.all %}
+                          {{ crime_type }},
+                          {% endfor %}
+                        </span>
                       </td>
                       <td class="align-middle">
-                        <button class="btn btn-link text-secondary mb-0 viewCriminalRecord">
+                        <a href="{% url 'ArrestPage' user.id criminal.id %}" class="btn btn-link text-secondary mb-0">
                           <i class="fa fa-ellipsis-v text-xs"></i>
                           View
-                        </button>
+                        </a>
                       </td>
                     </tr>
                     {% endfor %}

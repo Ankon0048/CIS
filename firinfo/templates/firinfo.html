@@ -28,7 +28,7 @@
     {% endblock %}
     {% block sidebar_item4 %}
     {% if user.roles == 'Admin' %}
-    Approve Applications
+    Emergency
     {% else %}
     Emergency
     {% endif %}
@@ -63,7 +63,9 @@
     {% endif %}
     {% endblock %}
     {% block sidevar_4 %}
-
+        {% if user.roles == 'Admin' %}
+            {% url 'emergency' user.id %}
+        {% else %}
     {% endblock %}
 
     {% block head %}
@@ -361,19 +363,34 @@
                                                 <li class="list-group-item">{{ individual_obj.criminal_nid }}</li>
                                             </ul>
                                             <div class="card-body">
-                                                <span>Percentage of matching:</span>
+                                                <span>Percentage of matching: </span>
                                                 <br>
-                                                <!-- <button class="btn btn-success" type="submit">Accept</button> -->
+                                                <a href="{% url 'fircomplete' case_info.id user.id individual_obj.id %}" class="btn btn-success" >Accept</a>
                                             </div>
                                         </div>
                                     </div>
                                     {% endfor %}
                                     <br>
                                 {% endfor %}
-                            {% else %}
-                            <p>No matches Found</p>
+                            <p>Select an unknown criminal</p>
+                                <a href="{% url 'fircomplete' case_info.id user.id %}" class="btn btn-success">Accept</a>
                             {% endif %}
-                            Update
+                        {% else %}
+                            {% if criminal_found %}
+                            <div class="col my-auto">
+                                <div class="card" style="width: 15rem;">
+                                    <img class="card-img-top" src="{% if criminal_found.criminal_related.criminal_img.url %}{{ criminal_found.criminal_related.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ criminal_found.criminal_related.criminal_name }}</h5>
+                                    </div>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">{{ criminal_found.criminal_related.criminal_nid }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p>No criminal Attached</p>
+                            {% endif %}
                         {% endif %}              
                     </div>
                 </div>
@@ -419,5 +436,9 @@
         // });
     </script>
 
+
+    <script>
+
+    </script>
       
     {% endblock %}

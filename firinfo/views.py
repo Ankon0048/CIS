@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from myapp.models import CASE_FIR, witnessInfo, victimInfo, PhysicalStructure, UserProfile, UserNotificationPanel
 from django.shortcuts import get_object_or_404, redirect
-from myapp.models import CriminalProfile,CASE_FIR, witnessInfo, victimInfo, PhysicalStructure, AdminProfile
+from myapp.models import FIR_CRIMINAL,CriminalProfile,CASE_FIR, witnessInfo, victimInfo, PhysicalStructure, AdminProfile
 from django.urls import reverse
 # Create your views here.
 
@@ -33,9 +33,7 @@ def filtering(fir_id):
             criminal_face_shape__iexact=sus_inputted_obj.faceShape,
             criminal_facial_hair__iexact=sus_inputted_obj.facialHair,
         )
-        print(f'printing length of objects = {len(find_objs)}')
         for j in range(0, len(find_objs)):
-            print(f'printing id of objects = {find_objs[j][0].id}')
             for i in find_objs[j]:
                 temp = temp.exclude(id=i.id)
         find_objs.append(temp)
@@ -162,3 +160,23 @@ def firinfo(request,fir_id,admin_id):
 
 def applyfir(request, user_id):
     return render(request, 'applyfir.html', {'user_id': user_id})
+
+
+def fircomplete(request,fir_id,admin_id,criminal_id=None):
+    admin_info = UserProfile.objects.filter(id=admin_id)
+    case_info = CASE_FIR.objects.get(id=fir_id)
+    witness_infos = witnessInfo.objects.filter(fir_id=case_info)
+    victim_infos = victimInfo.objects.get(id=case_info.victim_name.id)
+    physical_structure_infos = PhysicalStructure.objects.get(fir_id=case_info)
+    case_info.case_status = 'On Going'
+    case_info.save()
+    print(f'criminal_id is {criminal_id}')
+    if criminal_id:
+        criminal_infos = CriminalProfile.objects.get(id=criminal_id)
+        fir_criminal_relation = FIR_CRIMINAL.objects.create(
+            case_related = case_info,
+            criminal_related = criminal_infos
+        )
+        fir_criminal_relation = FIR_CRIMINAL.objects.filter(case_related = case_info)
+        return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos, 'criminal_found':fir_criminal_relation[0] }) 
+    return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos}) 

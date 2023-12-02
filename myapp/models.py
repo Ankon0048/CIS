@@ -280,8 +280,8 @@ class CriminalProfile(models.Model):
     criminal_division = models.CharField(max_length=255, null=True)
     criminal_district = models.CharField(max_length=255, null=True)
     criminal_thana = models.CharField(max_length=255, null=True)
-    criminal_firs = models.ManyToManyField(CASE_FIR)
-    criminal_crimes = models.CharField(max_length=255, null=True)
+    criminal_firs = models.ManyToManyField(CASE_FIR, blank=True, null=True)
+    criminal_crimes = models.ManyToManyField(Crimetype, blank=True, null=True)
     criminal_arrest_date = models.DateField(null=True)
     criminal_gender = models.CharField(max_length=255, null=True)
     criminal_hair_color = models.CharField(max_length=255, null=True)
@@ -295,6 +295,7 @@ class CriminalProfile(models.Model):
     criminal_weight = models.CharField(max_length=255, null=True)
     criminal_marks = models.CharField(max_length=255, null=True)
     criminal_mark_type = models.CharField(max_length=255, null=True)
+    criminal_detail_address = models.CharField(max_length=255, null=True, blank=True)
     def calculate_age(self):
         today = date.today()
         birth_date = self.criminal_DOB
@@ -331,3 +332,28 @@ class Notice(models.Model):
 class FAQ(models.Model):
     Ques = models.CharField(max_length=255, blank=True)
     Ans = models.CharField(max_length=255, blank=True)
+
+
+class FIR_CRIMINAL(models.Model):
+    case_related = models.ForeignKey(
+        CASE_FIR,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+
+    criminal_related = models.ForeignKey(
+        CriminalProfile,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
+
+class EMERGENCY(models.Model):
+    emergency_location = models.ManyToManyField(MapMarker)
+    sender = models.ForeignKey(
+        UserProfile,
+        on_delete=models.PROTECT,  # You can choose the appropriate behavior for deletion
+        null=True,
+    )
+    timestamp = models.TimeField(default=timezone.now)

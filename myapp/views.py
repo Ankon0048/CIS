@@ -4,6 +4,11 @@ from django.contrib import messages
 from django.core.mail import EmailMessage, send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
+from itertools import groupby
+from operator import attrgetter
+from collections import defaultdict
+from channels.generic.websocket import AsyncWebsocketConsumer
+import json
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +16,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from demo import settings
 from django.db.models import Q
-from .models import CriminalProfile, Notice,FAQ,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
+from .models import CriminalProfile,EMERGENCY, Notice,FAQ,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
 from django.http import JsonResponse
 from .forms import RegistrationForm
 from .tokens import generate_token
@@ -296,7 +301,55 @@ def AdminHomePage(request,user_id):
         )
     except CASE_FIR.DoesNotExist:
         case_records = None
-    return  render(request, 'policedashboard.html', {'user': userinfo, 'case_records': case_records})
+    
+    pending_count = completed_count = CASE_FIR.objects.filter(
+    (
+        Q(occuranced_division__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_district__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_upazila__iexact=userinfo.Allocated_Thana)
+    ) and
+    Q(case_status__iexact='Pending')
+).count()
+    accepted_count = completed_count = CASE_FIR.objects.filter(
+    (
+        Q(occuranced_division__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_district__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_upazila__iexact=userinfo.Allocated_Thana)
+    ) and
+    Q(case_status__iexact='Accepted')
+).count()
+    rejected_count = completed_count = CASE_FIR.objects.filter(
+    (
+        Q(occuranced_division__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_district__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_upazila__iexact=userinfo.Allocated_Thana)
+    ) and
+    Q(case_status__iexact='Rejected')
+).count()
+    ongoing_count = completed_count = CASE_FIR.objects.filter(
+    (
+        Q(occuranced_division__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_district__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_upazila__iexact=userinfo.Allocated_Thana)
+    ) and
+    Q(case_status__iexact='On Going')
+).count()
+    completed_count = CASE_FIR.objects.filter(
+    (
+        Q(occuranced_division__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_district__iexact=userinfo.Allocated_Thana) or
+        Q(occuranced_upazila__iexact=userinfo.Allocated_Thana)
+    ) and
+    Q(case_status__iexact='Completed')
+).count()
+    context = {
+        'pending_count': pending_count,
+        'accepted_count': accepted_count,
+        'rejected_count': rejected_count,
+        'ongoing_count': ongoing_count,
+        'completed_count': completed_count,
+    }
+    return  render(request, 'policedashboard.html', {'user': userinfo, 'case_records': case_records, 'context':context})
 
 
 
@@ -699,72 +752,72 @@ def complain4(request,user_id,FIR_id):
     userinfo = get_object_or_404(UserProfile, id=user_id)
     return  render(request, 'page4Fir.html',{'user': userinfo, 'FIR_id':FIR_id})
 
-def page5Fir(request, user_id, fir_id):
-    userinfo = get_object_or_404(UserProfile, id=user_id)
-    if request.method == 'GET':
-        Case_obj = get_object_or_404(CASE_FIR, id=fir_id)
-        sus_inputted_obj = get_object_or_404(PhysicalStructure, fir_id=Case_obj)
-        find_gender = sus_inputted_obj.gender
-        find_age = sus_inputted_obj.age
-        find_hairColor = sus_inputted_obj.hairColor
-        find_skinTone = sus_inputted_obj.skinTone
-        find_hairStyle = sus_inputted_obj.hairStyle
-        find_hairLength = sus_inputted_obj.hairLength
-        find_facialHair = sus_inputted_obj.facialHair
-        find_faceShape = sus_inputted_obj.faceShape
-        find_mark_option = sus_inputted_obj.dis_guis_mark
-        if find_gender:
-            found_by_gender = CriminalProfile.objects.filter(criminal_gender__iexact = find_gender)
-        if find_age:
-            temp = found_by_gender.filter(criminal_age__iexact = find_age)
-            if temp:
-                found_by_gender_and_age = temp
-            else:
-                found_by_gender_and_age = found_by_gender
-        if find_hairColor:
-            temp = found_by_gender_and_age.filter(criminal_hair_color__iexact = find_hairColor)
-            if temp:
-                found_by_three = temp
-            else:
-                found_by_three = found_by_gender_and_age
-        if find_skinTone:
-            temp = found_by_three.filter(criminal_skin_tone__iexact = find_skinTone)
-            if temp:
-                found_by_four = temp
-            else:
-                found_by_four = found_by_three
-        if find_hairStyle:
-            temp = found_by_four.filter(criminal_hair_style__iexact = find_hairStyle)
-            if temp:
-                found_by_five = temp
-            else:
-                found_by_five = found_by_four
-        if find_hairLength:
-            temp = found_by_five.filter(criminal_hair_length__iexact = find_hairLength)
-            if temp:
-                found_by_six = temp
-            else:
-                found_by_six = found_by_five
-        if find_facialHair:
-            temp = found_by_six.filter(criminal_face_shape__iexact = find_faceShape)
-            if temp:
-                found_by_seven = temp
-            else:
-                found_by_seven = found_by_six
-        if find_faceShape:
-            temp = found_by_seven.filter(criminal_facial_hair__iexact = find_facialHair)
-            if temp:
-                found_by_eight = temp
-            else:
-                found_by_eight = found_by_seven
-        if find_mark_option:
-            temp = found_by_eight.filter(criminal_mark_type__iexact = find_mark_option)
-            if temp:
-                results = temp
-            else:
-                results = found_by_eight
-        results = found_by_eight
-        return render(request, 'page5Fir.html', {'user':userinfo, 'results' : results})
+# def page5Fir(request, user_id, fir_id):
+#     userinfo = get_object_or_404(UserProfile, id=user_id)
+#     if request.method == 'GET':
+#         Case_obj = get_object_or_404(CASE_FIR, id=fir_id)
+#         sus_inputted_obj = get_object_or_404(PhysicalStructure, fir_id=Case_obj)
+#         find_gender = sus_inputted_obj.gender
+#         find_age = sus_inputted_obj.age
+#         find_hairColor = sus_inputted_obj.hairColor
+#         find_skinTone = sus_inputted_obj.skinTone
+#         find_hairStyle = sus_inputted_obj.hairStyle
+#         find_hairLength = sus_inputted_obj.hairLength
+#         find_facialHair = sus_inputted_obj.facialHair
+#         find_faceShape = sus_inputted_obj.faceShape
+#         find_mark_option = sus_inputted_obj.dis_guis_mark
+#         if find_gender:
+#             found_by_gender = CriminalProfile.objects.filter(criminal_gender__iexact = find_gender)
+#         if find_age:
+#             temp = found_by_gender.filter(criminal_age__iexact = find_age)
+#             if temp:
+#                 found_by_gender_and_age = temp
+#             else:
+#                 found_by_gender_and_age = found_by_gender
+#         if find_hairColor:
+#             temp = found_by_gender_and_age.filter(criminal_hair_color__iexact = find_hairColor)
+#             if temp:
+#                 found_by_three = temp
+#             else:
+#                 found_by_three = found_by_gender_and_age
+#         if find_skinTone:
+#             temp = found_by_three.filter(criminal_skin_tone__iexact = find_skinTone)
+#             if temp:
+#                 found_by_four = temp
+#             else:
+#                 found_by_four = found_by_three
+#         if find_hairStyle:
+#             temp = found_by_four.filter(criminal_hair_style__iexact = find_hairStyle)
+#             if temp:
+#                 found_by_five = temp
+#             else:
+#                 found_by_five = found_by_four
+#         if find_hairLength:
+#             temp = found_by_five.filter(criminal_hair_length__iexact = find_hairLength)
+#             if temp:
+#                 found_by_six = temp
+#             else:
+#                 found_by_six = found_by_five
+#         if find_facialHair:
+#             temp = found_by_six.filter(criminal_face_shape__iexact = find_faceShape)
+#             if temp:
+#                 found_by_seven = temp
+#             else:
+#                 found_by_seven = found_by_six
+#         if find_faceShape:
+#             temp = found_by_seven.filter(criminal_facial_hair__iexact = find_facialHair)
+#             if temp:
+#                 found_by_eight = temp
+#             else:
+#                 found_by_eight = found_by_seven
+#         if find_mark_option:
+#             temp = found_by_eight.filter(criminal_mark_type__iexact = find_mark_option)
+#             if temp:
+#                 results = temp
+#             else:
+#                 results = found_by_eight
+#         results = found_by_eight
+#         return render(request, 'page5Fir.html', {'user':userinfo, 'results' : results})
 
 
 def pdf_view(request):
@@ -822,7 +875,6 @@ def new_filepath(filename):
 
 def ArrestPage(request, admin_id, criminal_id=None):
     if request.method == 'POST':
-        print("CALLING POST UNNESSACRIFKAJFJ")
         temp_img = request.FILES.get('FrontFacedImage')
         temp_name = request.POST.get('criminalName')
         temp_nid = request.POST.get('criminalNID')
@@ -833,7 +885,6 @@ def ArrestPage(request, admin_id, criminal_id=None):
         temp_district = request.POST.get('criminalDistrict')
         temp_upazila = request.POST.get('criminalupazila')
         temp_arrestdate = request.POST.get('ArrestDate')
-        temp_approvedcharges = request.POST.get('ApprovedCharges')
         temp_gender = request.POST.get('gender')
         temp_haircolor = request.POST.get('hairColor')
         temp_skintone = request.POST.get('skinTone')
@@ -846,7 +897,49 @@ def ArrestPage(request, admin_id, criminal_id=None):
         temp_weight = request.POST.get('weight')
         temp_disguish = request.POST.get('Disguish')
         temp_detailsdisguis = request.POST.get('detailsDisguis')
+        temp_AddressTextBox = request.POST.get('AddressTextBox')
+        new_criminal_object = CriminalProfile.objects.filter(id=criminal_id)
 
+        if new_criminal_object:
+            new_criminal_object.first().criminal_img = temp_img
+            new_criminal_object.first().criminal_name=temp_name,
+            new_criminal_object.first().criminal_nid=temp_nid,  # Assuming color corresponds to hair color
+            #criminal_DOB=temp_dob,
+            new_criminal_object.first().criminal_email = temp_email,
+            new_criminal_object.first().criminal_phone = temp_contactno,
+            new_criminal_object.first().criminal_division = temp_division,
+            new_criminal_object.first().criminal_district = temp_district,
+            new_criminal_object.first().criminal_thana = temp_upazila,
+            new_criminal_object.first().criminal_arrest_date = temp_arrestdate,
+            new_criminal_object.first().criminal_gender = temp_gender,
+            new_criminal_object.first().criminal_hair_color = temp_haircolor,
+            new_criminal_object.first().criminal_skin_tone = temp_skintone,
+            new_criminal_object.first().criminal_hair_style = temp_hairstyle,
+            new_criminal_object.first().criminal_hair_length = temp_hairlength,
+            new_criminal_object.first().criminal_age = temp_age,
+            new_criminal_object.first().criminal_face_shape = temp_faceshape,
+            new_criminal_object.first().criminal_facial_hair = temp_facialhair,
+            new_criminal_object.first().criminal_height = temp_height,
+            new_criminal_object.first().criminal_weight = temp_weight,
+            new_criminal_object.first().criminal_marks = temp_detailsdisguis,
+            new_criminal_object.first().criminal_mark_type = temp_disguish,
+            new_criminal_object.first().criminal_detail_address = temp_AddressTextBox,
+            temp_selected_crime_types = request.POST.getlist('ApprovedCharges')
+            for crime_type_name in temp_selected_crime_types:
+                crime_type, created = Crimetype.objects.get_or_create(crime_name=crime_type_name)
+                new_criminal_object.first().criminal_crimes.add(crime_type)
+
+            temp_FIRno = request.POST.getlist('FIRno')
+            for firno in temp_FIRno:
+                if firno:
+                    crime_type, created = CASE_FIR.objects.get_or_create(id=firno)
+                    new_criminal_object.criminal_firs.add(crime_type)
+            admin = AdminProfile.objects.get(id=admin_id)
+            fir_numbers = CASE_FIR.objects.all()
+            crime_types = Crimetype.objects.all()
+            new_criminal_object.save()
+            return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers, 'crime_types':crime_types  })
+        
         new_criminal_obj = CriminalProfile.objects.create(
             criminal_img=temp_img,
             criminal_name=temp_name,
@@ -857,7 +950,6 @@ def ArrestPage(request, admin_id, criminal_id=None):
             criminal_division = temp_division,
             criminal_district = temp_district,
             criminal_thana = temp_upazila,
-            criminal_crimes = temp_approvedcharges,
             criminal_arrest_date = temp_arrestdate,
             criminal_gender = temp_gender,
             criminal_hair_color = temp_haircolor,
@@ -871,47 +963,64 @@ def ArrestPage(request, admin_id, criminal_id=None):
             criminal_weight = temp_weight,
             criminal_marks = temp_detailsdisguis,
             criminal_mark_type = temp_disguish,
+            criminal_detail_address = temp_AddressTextBox,
         )
+        temp_selected_crime_types = request.POST.getlist('ApprovedCharges')
+        for crime_type_name in temp_selected_crime_types:
+            crime_type, created = Crimetype.objects.get_or_create(crime_name=crime_type_name)
+            new_criminal_obj.criminal_crimes.add(crime_type)
+
+        temp_FIRno = request.POST.getlist('FIRno')
+        for firno in temp_FIRno:
+            if firno:
+                crime_type, created = CASE_FIR.objects.get_or_create(id=firno)
+                new_criminal_obj.criminal_firs.add(crime_type)
         admin = AdminProfile.objects.get(id=admin_id)
         fir_numbers = CASE_FIR.objects.all()
-        return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
+        crime_types = Crimetype.objects.all()
+        return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers, 'crime_types':crime_types  })
     if criminal_id:
         criminal = get_object_or_404(CriminalProfile, id=criminal_id)
-        print(f'criminl_id is {criminal_id}')
         # print(f'object fount at {criminal}')
         if criminal:
-            return JsonResponse({
-                'criminal_id' : criminal.id,
-                #'criminal_img': criminal.criminal_img,
-                'criminal_name': criminal.criminal_name,
-                'criminal_nid': criminal.criminal_nid,
-                'criminal_DOB': str(criminal.criminal_DOB),
-                'criminal_email': criminal.criminal_email,
-                'criminal_phone': criminal.criminal_phone,
-                'criminal_division': criminal.criminal_division,
-                'criminal_district': criminal.criminal_district,
-                'criminal_thana': criminal.criminal_thana,
-                'criminal_gender': criminal.criminal_gender,
-                'criminal_hair_color': criminal.criminal_hair_color,
-                'criminal_skin_tone': criminal.criminal_skin_tone,
-                'criminal_hair_style': criminal.criminal_hair_style,
-                'criminal_hair_length': criminal.criminal_hair_length,
-                'criminal_age': criminal.criminal_age,
-                'criminal_face_shape': criminal.criminal_face_shape,
-                'criminal_facial_hair': criminal.criminal_facial_hair,
-                'criminal_height': criminal.criminal_height,
-                'weight': criminal.criminal_weight,
-                'criminal_marks': criminal.criminal_marks,
-                'criminal_mark_type': criminal.criminal_mark_type,
-            })
+            # return JsonResponse({
+            #     'criminal_id' : criminal.id,
+            #     #'criminal_img': criminal.criminal_img,
+            #     'criminal_name': criminal.criminal_name,
+            #     'criminal_nid': criminal.criminal_nid,
+            #     'criminal_DOB': str(criminal.criminal_DOB),
+            #     'criminal_email': criminal.criminal_email,
+            #     'criminal_phone': criminal.criminal_phone,
+            #     'criminal_division': criminal.criminal_division,
+            #     'criminal_district': criminal.criminal_district,
+            #     'criminal_thana': criminal.criminal_thana,
+            #     'criminal_gender': criminal.criminal_gender,
+            #     'criminal_hair_color': criminal.criminal_hair_color,
+            #     'criminal_skin_tone': criminal.criminal_skin_tone,
+            #     'criminal_hair_style': criminal.criminal_hair_style,
+            #     'criminal_hair_length': criminal.criminal_hair_length,
+            #     'criminal_age': criminal.criminal_age,
+            #     'criminal_face_shape': criminal.criminal_face_shape,
+            #     'criminal_facial_hair': criminal.criminal_facial_hair,
+            #     'criminal_height': criminal.criminal_height,
+            #     'weight': criminal.criminal_weight,
+            #     'criminal_marks': criminal.criminal_marks,
+            #     'criminal_mark_type': criminal.criminal_mark_type,
+            # })
+            admin = AdminProfile.objects.get(id=admin_id)
+            fir_numbers = CASE_FIR.objects.all()
+            crime_types = Crimetype.objects.all()
+            criminal_info = CriminalProfile.objects.get(id = criminal_id)
+            return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers,'crime_types':crime_types,'criminal_info':criminal_info})
         else:
             admin = AdminProfile.objects.get(id=admin_id)
             fir_numbers = CASE_FIR.objects.all()
-            return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers  })
+            crime_types = Crimetype.objects.all()
+            return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers,'crime_types':crime_types  })
     admin = AdminProfile.objects.get(id=admin_id)
     fir_numbers = CASE_FIR.objects.all()
-    print("Without criminal_id Find")
-    return  render(request, 'NewArrest.html',{'user': admin,'fir_numbers':fir_numbers })
+    crime_types = Crimetype.objects.all()
+    return  render(request, 'NewArrest.html',{'user': admin,'fir_numbers':fir_numbers,'crime_types':crime_types })
 
 def applyCISLoader(request):
     if request.method == 'POST':
@@ -1055,3 +1164,54 @@ def searchbar_from_advance_search(request):
     print(found_by_uploader_case_records)
     form = FilterForm()
     return render(request, 'search_page_user.html', {'user': user_profile , 'form': form,'results':found_by_uploader_case_records})
+
+
+def save_marker(request):
+    if request.method == 'POST':
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        location_name = request.POST.get('location_name')
+        user = request.POST.get('user_id')
+        user_profile = get_object_or_404(UserProfile, id=user)
+        map = MapMarker(name = location_name, latitude =  latitude, longitude =  longitude)
+        map.save()
+        maps=[map]
+        existing_emergency = EMERGENCY.objects.filter(sender=user_profile).first()
+        if existing_emergency:
+            existing_emergency.emergency_location.add(*maps)
+            existing_emergency.save()
+            print("Location updated:", existing_emergency)
+        else:
+            emergency = EMERGENCY(sender=user_profile)
+            emergency.save()
+            emergency.emergency_location.add(*maps)
+            # new_book = Book(title=title)
+            # new_book.save()
+            # new_book.authors.add(*authors)
+            # print("New book created:", new_book)
+            # emergency = EMERGENCY(sender=user_profile, emergency_location=[map])
+            emergency.save()
+            print(user)
+
+        return JsonResponse({
+            'lat': latitude,
+        })
+
+def group_emerg_by_user(emergencies):
+    dict_user_emergencies = defaultdict(list)
+    for emergency in emergencies:
+        for location in emergency.emergency_location.all():
+            dict_user_emergencies[emergency.sender].append((location.latitude, location.longitude))
+    return dict(dict_user_emergencies)    
+
+def emergency(request,admin_id):
+    userinfo = get_object_or_404(AdminProfile, id=admin_id)
+    emmergency = EMERGENCY.objects.all()
+
+    emer_want = group_emerg_by_user(emmergency)
+
+    emergencies = EMERGENCY.objects.all().order_by('sender', '-timestamp')
+
+    grouped_emergencies = {key: list(group) for key, group in groupby(emergencies, key=attrgetter('sender'))}
+
+    return  render(request, 'emergency_req.html', {'user': userinfo, 'emer_want': emer_want, 'grouped_emergencies': grouped_emergencies})

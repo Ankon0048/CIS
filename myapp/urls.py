@@ -28,9 +28,10 @@ urlpatterns = [
     path('Upload_WITHNESS_Record/',views.upload_witeness_record, name="upload_witeness_record"),
     path('Upload_Offender_Record/',views.upload_offender_record, name="upload_offender_record"),
     path('your_complaint_view/',views.pdf_view, name="pdf_view"),
-    path('page5Fir/<int:user_id>/<int:fir_id>',views.page5Fir, name="page5Fir"),
     path('backtohome/<int:criminal_id>/<int:user_id>', views.backtohome, name="backtohome"),
     path('search_req_user/<int:user_id>/', views.goto_search_page, name = "Search_Page"),
+    path('emergency/<int:admin_id>/', views.emergency, name = "emergency"),
+    path('save_marker/', views.save_marker, name = "save_marker"),
     #path('map/', MapView.as_view(), name='map-view'),
 
     path('map/', views.context_date, name='map-view'),
