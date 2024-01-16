@@ -253,7 +253,7 @@
                                 Beared
                             </label>
                         </div>
-                    </div>return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos, 'criminal_found':fir_criminal_relation[0] }) 
+                    </div> 
                     <div class="col-md-2">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" value="mustache_and_beared" name="FacialRadioDefault"
@@ -391,7 +391,7 @@
                     <div class="col-6">
                         <label for="floatingTextarea2" class="form-label" style="margin-top: 10px;" >Other Informations</label>
                         <div class="form-floating">
-                            <textarea class="form-control" name="address" id="floatingTextarea2" style="height: 80px;"></textarea>
+                            <textarea class="form-control" name="other_info" id="floatingTextarea2" style="height: 80px;"></textarea>
                             <label for="floatingTextarea2">Details</label>
                         </div>
                     </div>
@@ -434,13 +434,6 @@
                     <input type="text" class="form-control" value="" id="hiddencolor1" name="hiddencolor1" style="display: none;">
                     <input type="text" class="form-control" value="" id="skinToneofoffender1" name="skinToneofoffender1" style="display: none;">
                 </div>
-            </div>
-        </div>
-        <div class="row" id="addbuttondiv">
-            <div class="col-md-10"></div>
-            <div class="col-md-2">
-                <button type="button" id="addCriminal" class="form-control btn btn-outline-secondary"
-                    style="margin-bottom: auto;" onclick="addAnotherWitness()">Add another</button>
             </div>
         </div>
         <div class="row" style="margin-top: 10px;">

@@ -54,10 +54,10 @@
   {% endblock %}
 
   {% block ProfilerType %}User{% endblock %}
-  {% block Pagetitle %}New FIR{% endblock %}
-  {% block sidebar_item2 %}New FIR{% endblock %}
-  {% block sidebar_item3 %}Application Request{% endblock %}
-
+  {% block Pagetitle %}New Charge Sheet{% endblock %}
+  {% block sidebar_item2 %}New Charge Sheet{% endblock %}
+  {% block sidebar_item3 %}Details{% endblock %}
+  {% block sidebar_item4 %}Emergency{% endblock %}
   {% block UserDetails %}
   <img src="{% if user.profile_image %}{{ user.profile_image.url }}{% else %}{% static 'img/Comoon_People.webp' %}{% endif %}" alt="" style="width: 50px; border-radius: 100%;">
   <span class="d-sm-inline d-none">{{ user.name }}</span>

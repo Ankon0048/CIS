@@ -47,8 +47,8 @@
 
     {% block dashboard_active %}active{% endblock %}
 
-    {% block sidebar_item2 %}New FIR{% endblock %}
-    {% block sidebar_item3 %}Application Request{% endblock %}
+    {% block sidebar_item2 %}New Charge Sheet{% endblock %}
+    {% block sidebar_item3 %}Details{% endblock %}
     {% block sidebar_item4 %}Emergency{% endblock %}
     {% block sidevar_2 %}
     {% url 'UseComplainPage1' user.id 0%}
@@ -70,7 +70,7 @@
           <p id="demo" style="display: none;"></p>
         </li>
         <li>
-          <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2">Update Profile</button>
+          <button type="button" style="display: none;" class="btn bg-gradient-dark w-100 my-4 mb-2">Update Profile</button>
         </li>
     </ul>
     
@@ -102,7 +102,7 @@
                         <td>
                           <div class="d-flex px-2 py-1">
                             <div>
-                              <img src="{% if case.victim_name.profile_image %}{{ case.victim_name.profile_image.url }}{% else %}{% static 'img/team-2.jpg' %}{% endif %}" class="avatar avatar-sm me-3" alt="user1">
+                              <img src="{% if case.victim_name.profile_image %}{{ case.victim_name.profile_image.url }}{% else %}{% static 'img/2c3nm4a.jpg' %}{% endif %}" class="avatar avatar-sm me-3" alt="user1">
                             </div>
                             <div class="d-flex flex-column justify-content-center">
                               <h6 class="mb-0 text-sm">{{ case.victim_name.name }}</h6>

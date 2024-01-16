@@ -195,26 +195,18 @@
                       </li>
                       <li class="current dropdown"><a href="#">Home</a></li>
                       <li class="dropdown">
-                        <a href="#">About</a>
-                        <ul>
-                          <li><a href="">About Us</a></li>
-                          <li><a href="">Our Services</a></li>
-                          <li><a href="">404</a></li>
-                        </ul>
-                      </li>
-                      <li class="dropdown">
                         <a href="#">How it works</a>
                         <ul>
-                          <li><a href="">Police Role</a></li>
-                          <li><a href="">User Role</a></li>
+                          <li><a href="#policesection">Police Role</a></li>
+                          <li><a href="#usersection">User Role</a></li>
                         </ul>
                       </li>
 
                       <li class="dropdown">
-                        <a href="#">News and Notice</a>
+                        <a href="#">FAQ and Notice</a>
                         <ul>
-                          <li><a href="">News</a></li>
-                          <li><a href="">Notices</a></li>
+                          <li><a href="#faqsection">FAQ</a></li>
+                          <li><a href="#noticesection">Notices</a></li>
                         </ul>
                       </li>
                     </ul>
@@ -719,7 +711,7 @@
                           alt=""
                         />
                       </figure>
-                      <div class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
+                      <div id="policesection" class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
                         <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
                           <a
                             href="{% url 'HOME' %}"
@@ -727,6 +719,10 @@
                             >Investigator</a
                           >
                         </h3>
+                        <p style="color: black; margin: 10px;">1)Admin will be appointed by superadmin per thana</p>
+                        <p style="color: black; margin: 10px;">2)Admin will accept and update charge sheets</p>
+                        <p style="color: black; margin: 10px;">3)Admin will react to emergency requests</p>
+                        <p style="color: black; margin: 10px;">4)Admin will see details of charge sheet and criminal records</p>
                       </div>
                     </div>
                   </div>
@@ -742,7 +738,7 @@
                           alt=""
                         />
                       </figure>
-                      <div class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
+                      <div id="usersection" class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
                         <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
                           <a
                             href="{% url 'HOME' %}"
@@ -750,6 +746,10 @@
                             >Common People</a
                           >
                         </h3>
+                        <p style="color: black; margin: 10px;">1)First create an account</p>
+                        <p style="color: black; margin: 10px;">2)Then You can log in and file a Charge Sheet</p>
+                        <p style="color: black; margin: 10px;">3)You can give a description and can also identify suspects</p>
+                        <p style="color: black; margin: 10px;">4)Keep Track of your complain from the dashboard</p>
                       </div>
                     </div>
                   </div>
@@ -763,7 +763,7 @@
 
       <!-- faq section start -->
       <div class="container">
-        <div class="faq-container">
+        <div class="faq-container" id="faqsection">
           <h2 class="text-center text-primary">Police FAQ</h2>
 
           <div class="accordion" id="faqAccordion">
@@ -772,16 +772,15 @@
               <div class="card-header" id="headingFive">
                 <h5 class="mb-0">
                   <button
-                    class="btn btn-link collapsed"
+                    class="btn collapsed"
                     type="button"
-                    data-toggle="collapse"
-                    data-target="#collapseFive"
-                    aria-expanded="false"
-                    aria-controls="collapseFive"
                   >
                     <span class="faq-question"
                       >Q: {{ faq.Ques }}?</span
                     >
+                    <div class="card-body faq-answer" style="margin-left: 80px;">
+                      A: {{ faq.Ans }}
+                    </div>
                   </button>
                 </h5>
               </div>
@@ -791,9 +790,7 @@
                 aria-labelledby="headingFive"
                 data-parent="#faqAccordion"
               >
-                <div class="card-body faq-answer">
-                  A: {{ faq.Ans }}
-                </div>
+                
               </div>
             </div>
             {% endfor %}
@@ -825,7 +822,7 @@
                 data-wow-duration="1500ms"
               >
                 <div class="inner-box p_relative d_block bg_white tran_5">
-                  <div class="row">
+                  <div class="row" id="noticesection">
                     <div class="notice">
                       <marquee
                         behavior=""

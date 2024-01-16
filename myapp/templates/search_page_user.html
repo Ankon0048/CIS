@@ -93,8 +93,10 @@
                       <div class="col-md-10">
                         <div class="row" id="type_box">
                           <div class="col-md-10">
-                            <input type="text" class="form-control" placeholder="Enter Search Terms" name="searchTerms"
-                              id="searchTerms">
+                            <input type="text" class="form-control mb-2" style="display: none;" placeholder="Enter Search Terms" name="searchTerms"id="searchTerms">
+                            <input type="number" class="form-control mb-2" style="display: none;" placeholder="Enter FIR number" name="searchcomplain"id="searchcomplain">
+                            <input type="text" class="form-control mb-2" style="display: none;" placeholder="Enter Victim Name" name="searchvictim"id="searchvictim">
+
 
                           </div>
                           <div class="col-md-2">
@@ -135,6 +137,14 @@
                               </div>
                             </div>
                           </div>
+                        </div>
+                        <div class="row" id="case_type" style="justify-content: center; display: none;" >
+                          <label for="case_type" class="form-label">Crime Type</label>
+                          <select class="form-select form-select-sm"  aria-label=".form-select-sm example"  name="new_case_type" style="font-size: medium; width: 97%; ">
+                            {% for case in case_types %}
+                              <option value="{{ case.crime_name }}">{{ case.crime_name }}</option>
+                            {% endfor %}
+                          </select>
                         </div>
                         <div class="row" id="status_box" style="display: none;">
                           <div class="col-md-4">
@@ -259,6 +269,20 @@
     dateBox.style.display = this.checked ? "block" : "none";
   });
 
+
+  document.getElementById("id_firnumber").addEventListener("click", function () {
+    var dateBox = document.getElementById("searchcomplain");
+    dateBox.style.display = this.checked ? "block" : "none";
+  });
+  document.getElementById("id_victim_name").addEventListener("click", function () {
+    var dateBox = document.getElementById("searchvictim");
+    dateBox.style.display = this.checked ? "block" : "none";
+  });
+
+  document.getElementById("id_crimeType").addEventListener("click", function () {
+    var dateBox = document.getElementById("case_type");
+    dateBox.style.display = this.checked ? "block" : "none";
+  });
 </script>
 
 {% endblock %}

@@ -5,11 +5,12 @@ from django.core.mail import EmailMessage, send_mail
 from demo import settings
 from django.utils import timezone
 from datetime import date
+from datetime import datetime
 import os
 
 def filepath(request,filename):
     old_filename = filename
-    timeNow = datetime.datetime.now().strftime('%Y%m%d%H:%M:%S')
+    timeNow = datetime.now().strftime('%Y%m%d%H:%M:%S')
     filename = "%s%s" % (timeNow,old_filename)
     return os.path.join('uploads/',filename)
 
@@ -35,6 +36,7 @@ class victimInfo(models.Model):
     division = models.CharField(max_length=50,null=True)
     district = models.CharField(max_length=50,null=True)
     upazila = models.CharField(max_length=50,null=True)
+    detail_address = models.CharField(max_length=255, null=True, blank=True)
     profile_image = models.ImageField(upload_to=filepath, null=True, blank=True)
 
 class UserProfile(models.Model):
@@ -118,6 +120,7 @@ class CASE_FIR(models.Model):
     occuranced_upazila = models.CharField(max_length=50,null=True)
     brief = models.TextField(null = True)
     brief_material = models.TextField(null = True)
+    additional_info = models.TextField(null = True)
 
 
 class Case_related(models.Model):
@@ -212,6 +215,7 @@ class PhysicalStructure(models.Model):
     facialHair = models.CharField(max_length=255,null=True)
     faceShape = models.CharField(max_length=255,null=True)
     age = models.CharField(max_length=255,null=True)
+    other_info = models.CharField(max_length=255,null=True)
     height = models.CharField(max_length=255,null=True)  # Adjust the max_digits and decimal_places as needed
     weight = models.CharField(max_length=255,null=True)  # Adjust the max_digits and decimal_places as needed
     fir_id = models.ForeignKey(
@@ -280,8 +284,8 @@ class CriminalProfile(models.Model):
     criminal_division = models.CharField(max_length=255, null=True)
     criminal_district = models.CharField(max_length=255, null=True)
     criminal_thana = models.CharField(max_length=255, null=True)
-    criminal_firs = models.ManyToManyField(CASE_FIR, blank=True, null=True)
-    criminal_crimes = models.ManyToManyField(Crimetype, blank=True, null=True)
+    criminal_firs = models.ManyToManyField(CASE_FIR, blank=True)
+    criminal_crimes = models.ManyToManyField(Crimetype, blank=True)
     criminal_arrest_date = models.DateField(null=True)
     criminal_gender = models.CharField(max_length=255, null=True)
     criminal_hair_color = models.CharField(max_length=255, null=True)
@@ -349,6 +353,9 @@ class FIR_CRIMINAL(models.Model):
         null=True
     )
 
+def get_current_time():
+    return datetime.now().time()
+
 class EMERGENCY(models.Model):
     emergency_location = models.ManyToManyField(MapMarker)
     sender = models.ForeignKey(
@@ -356,4 +363,4 @@ class EMERGENCY(models.Model):
         on_delete=models.PROTECT,  # You can choose the appropriate behavior for deletion
         null=True,
     )
-    timestamp = models.TimeField(default=timezone.now)
+    timestamp = models.TimeField(default=get_current_time)

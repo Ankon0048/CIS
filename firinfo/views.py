@@ -47,11 +47,10 @@ def filtering(fir_id):
             criminal_hair_color__iexact=sus_inputted_obj.hairColor,
             criminal_face_shape__iexact=sus_inputted_obj.faceShape,
         )
-        print(f'printing length of objects = {len(find_objs)}')
         for j in range(0, len(find_objs)):
-            print(f'printing id of objects = {find_objs[j][0].id}')
-            for i in find_objs[j]:
-                temp = temp.exclude(id=i.id)
+            if find_objs[j]:
+                for i in find_objs[j]:
+                    temp = temp.exclude(id=i.id)
         if temp:
             find_objs.append(temp)
     if sus_inputted_obj.gender and sus_inputted_obj.age and sus_inputted_obj.skinTone and sus_inputted_obj.hairLength and sus_inputted_obj.hairStyle and sus_inputted_obj.hairColor:
@@ -134,10 +133,16 @@ def firinfo(request,fir_id,admin_id):
                 temp_title = f'Case #{fir_id} has been accepted'
                 temp_message = f'Follow the #{fir_id}. {custom_message}'
                 case_info.save()
-            else:
+            elif status == 'reject':
                 case_info.case_status = 'Rejected'
                 temp_title = f'Case #{fir_id} has been rejected'
                 temp_message = f'Follow the #{fir_id}.{custom_message}'
+                case_info.save()
+            else:
+                temp_message = custom_message
+                case_info.additional_info = temp_message
+                temp_title = f'Case #{fir_id} has been completed'
+                case_info.case_status = 'Completed'
                 case_info.save()
             obj = UserNotificationPanel.objects.create(
                     for_user = temp_user_id,

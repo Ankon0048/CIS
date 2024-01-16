@@ -9,7 +9,7 @@
 {% endblock %}
     {% block Pagetitle %}Dashboard{% endblock %}
 
-    {% block newFir_active %}active{% endblock %}
+    {% block item_3 %}active{% endblock %}
 
     {% block sidebar_item2 %}
         {% if user.roles == 'Admin' %}
@@ -23,7 +23,7 @@
     {% if user.roles == 'Admin' %}
     Criminal Records
     {% else %}
-    Application Request
+    Details
     {% endif %}
     {% endblock %}
     {% block sidebar_item4 %}
@@ -65,7 +65,7 @@
     {% block sidevar_4 %}
         {% if user.roles == 'Admin' %}
             {% url 'emergency' user.id %}
-        {% else %}
+        {% endif %}
     {% endblock %}
 
     {% block head %}
@@ -115,13 +115,13 @@
                                 <div class="col-md-4">
                                     <div class="mb-3" id="victim_name">
                                         <label for="victimName" class="form-label" style="width: 150px;">Victim's Name</label>
-                                        <input type="text" class="form-control"  id="victimName" name="victimName" value="{{ victim_infos.name }}">
+                                        <input type="text" disabled class="form-control"  id="victimName" name="victimName" value="{{ victim_infos.name }}">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3" id="victim_fathername" >
                                         <label for="fathername" class="form-label" style="width: 200px;">Father Name</label>
-                                        <input type="text"  class="form-control"  id="fathername" name="Fathername" value="{% if victim_infos.fathername %}{{ victim_infos.fathername }}{% else %} Not Given {% endif %}">
+                                        <input type="text" disabled class="form-control"  id="fathername" name="Fathername" value="{% if victim_infos.fathername %}{{ victim_infos.fathername }}{% else %} Not Given {% endif %}">
                                     </div>
                                 </div>
                             </div>
@@ -129,13 +129,13 @@
                                 <div class="col-md-4">
                                     <div class="mb-3" id="victim_ssn" >
                                         <label for="ssn" class="form-label">NID</label>
-                                        <input type="text" class="form-control" id="ssn" name="ssn" min="1" value="{{ victim_infos.nid }}">
+                                        <input type="text" disabled class="form-control" id="ssn" name="ssn" min="1" value="{{ victim_infos.nid }}">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3" id="victim_age"  >
                                         <label for="age" class="form-label">Age</label>
-                                        <input type="text"  class="form-control" id="age" name="age" min="1" value="{{ victim_infos.age }}">
+                                        <input type="text" disabled class="form-control" id="age" name="age" min="1" value="{{ victim_infos.age }}">
                                     </div>
                                 </div>
                             </div>
@@ -151,7 +151,7 @@
                                 <div class="col-md-3">
                                     <div class="mb-3" id="victim_mail">
                                         <label for="email" class="form-label">Email ID</label>
-                                        <input type="email" class="form-control" id="email" name="email" value="{{ victim_infos.email }}">
+                                        <input type="email" disabled class="form-control" id="email" name="email" value="{{ victim_infos.email }}">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -159,7 +159,7 @@
                                         <label for="mobile" class="form-label">Mobile No</label>
                                         <div class="input-group">
                                             <div class="input-group-text">+880</div>
-                                            <input type="text"  class="form-control" id="mobile" maxlength="10" name="mobile" value="{{ victim_infos.phone }}">
+                                            <input type="text" disabled class="form-control" id="mobile" maxlength="10" name="mobile" value="{{ victim_infos.phone }}">
                                         </div>
                                     </div>
                                 </div>
@@ -175,19 +175,19 @@
                                   <div class="col-md-3">
                                       <div class="mb-3">
                                         <label for="crime_type" class="form-label">Crime Type</label>
-                                        <input type="text" class="form-control" value="{{ case_info.crime_type.crime_name }}">
+                                        <input type="text" disabled class="form-control" value="{{ case_info.crime_type.crime_name }}">
                                       </div>
                                   </div>
                                   <div class="col-md-3">
                                       <div class="mb-3">
                                           <label for="date" class="form-label">Occurance date</label>
-                                          <input type="date" class="form-control" name="date" id="date" value="{{ case_info.occurance_date|date:'Y-m-d' }}">
+                                          <input type="date" disabled class="form-control" name="date" id="date" value="{{ case_info.occurance_date|date:'Y-m-d' }}">
                                       </div>
                                   </div>
                                   <div class="col-md-2">
                                       <div class="mb-3">
                                         <label for="time" class="form-label">Time of incident</label>
-                                        <input type="time" class="form-control" value="{{ case_info.occurance_time|date:'H:i' }}" readonly>
+                                        <input type="time" disabled class="form-control" value="{{ case_info.occurance_time|date:'H:i' }}" readonly>
                                       </div>
                                   </div>
                               </div>
@@ -209,7 +209,7 @@
                               </div>
                               <div class="row mb-3" style="justify-content: center;">
                                     <div class="col-md-4">
-                                      <input type="text" id="addresses" class="form-control" value="{% if case_info.occuranced_upazila %}{{ case_info.occuranced_upazila }} {% endif %}{% if case_info.occuranced_district %}{{ case_info.occuranced_district }} {% endif %}{% if case_info.occuranced_division %}{{ case_info.occuranced_division }} {% endif %}">
+                                      <input type="text" disabled id="addresses" class="form-control" value="{% if case_info.occuranced_upazila %}{{ case_info.occuranced_upazila }} {% endif %}{% if case_info.occuranced_district %}{{ case_info.occuranced_district }} {% endif %}{% if case_info.occuranced_division %}{{ case_info.occuranced_division }} {% endif %}">
                                     </div>
                               </div>
                               <div class="row">
@@ -217,7 +217,7 @@
                                       <div class="mb-3">
                                           <label for="floatingTextarea2" class="form-label" style="margin-top: 10px;" >Brief the occurance</label>
                                           <div class="form-floating">
-                                              <textarea class="form-control" name="brief" id="floatingTextarea2" style="height: 80px;">{% if case_info.brief %} {{ case_info.brief }} {% endif %}</textarea>
+                                              <textarea disabled class="form-control" name="brief" id="floatingTextarea2" style="height: 80px;">{% if case_info.brief %} {{ case_info.brief }} {% endif %}</textarea>
                                               <label for="floatingTextarea2">Details</label>
                                             </div>
                                       </div>
@@ -226,7 +226,7 @@
                                       <div class="mb-3">
                                           <label for="floatingTextarea3" class="form-label" style="margin-top: 10px;" >Description of Stolen or Damaged Property (If applicable)</label>
                                           <div class="form-floating">
-                                              <textarea class="form-control" name="brief_metal" id="floatingTextarea3" style="height: 80px;">{% if case_info.brief_material %} {{ case_info.brief_material }} {% endif %}</textarea>
+                                              <textarea disabled class="form-control" name="brief_metal" id="floatingTextarea3" style="height: 80px;">{% if case_info.brief_material %} {{ case_info.brief_material }} {% endif %}</textarea>
                                               <label for="floatingTextarea2">Details</label>
                                             </div>
                                       </div>
@@ -252,7 +252,7 @@
                                         <div class="col-md-4">
                                             <div class="mb-3">
                                                 <label for="susName1" class="form-label">Name of Offender (if known or heard)</label>
-                                                <input type="text" class="form-control" id="susName1" name="susName1"
+                                                <input disabled type="text" class="form-control" id="susName1" name="susName1"
                                                     placeholder="Suspect Name" value="{% if physical_structure_infos.name %}{{ physical_structure_infos.name }}{% else %} Not Given {% endif %}">
                                             </div>
                                         </div>
@@ -312,7 +312,7 @@
                                         <div class="col-md-6">
                                             <div class="row" style="margin: 10px;">
                                                 <label for="customRange2" class="form-label">Distinguished Marks</label>
-                                                <input type="text" class="form-control" value="{{ physical_structure_infos.dis_guis_mark }}">
+                                                <input disabled type="text" class="form-control" value="{{ physical_structure_infos.dis_guis_mark }}">
                                             </div>
                                         </div>
                                         <div class="col-md-5">
@@ -330,68 +330,83 @@
                         {% if user.roles == 'Admin' %}
                         <form method="post" action="{% url 'firinfo' case_info.id user.id %}" enctype="multipart/form-data">
                             {% csrf_token %}
+                            {% if case_info.case_status != 'Completed' %}
                             <div class="row">
                                 <label style="margin-top: 10px; margin-left: 310px;" for="feedback_message">Feedback Message:</label>
                                 <div class="form-group d-flex justify-content-center">
                                     <textarea style="width: 600px;" class="form-control" name="feedback_message" id="feedback_message" cols="30" rows="2"></textarea>
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="row d-flex justify-content-center">
-                                <div class="col text-center " style="margin-top: 20px;">
-                                    <button type="submit" name="stat-btn" value="accept" class="btn btn-success m-auto">
-                                        Accept
-                                    </button>
-                                </div>
-                                <div class="col text-center" style="margin-top: 20px;">
-                                    <button type="submit" name="stat-btn" value="reject" class="btn btn-danger m-auto">
-                                        Reject
-                                    </button>
-                                </div>
+                                {% if case_info.case_status == 'Pending' %}
+                                    <div class="col text-center " style="margin-top: 20px;">
+                                        <button type="submit" name="stat-btn" value="accept" class="btn btn-success m-auto">
+                                            Accept
+                                        </button>
+                                    </div>
+                                    <div class="col text-center" style="margin-top: 20px;">
+                                        <button type="submit" name="stat-btn" value="reject" class="btn btn-danger m-auto">
+                                            Reject
+                                        </button>
+                                    </div>
+                                {% elif case_info.case_status == 'On Going' %}
+                                    <div class="col text-center " style="margin-top: 20px;">
+                                        <button type="submit" name="stat-btn" value="complete" class="btn btn-info m-auto">
+                                            Complete
+                                        </button>
+                                    </div>
+                                {% endif %}
                             </div>
                         </form>
-                        {% elif user.roles == 'User' and case_info.case_status == 'Accepted' %}
-                            {% if potential_suspects %}
-                                {% for obj in potential_suspects %}
-                                    {% for individual_obj in obj %}
-                                    <div class="col my-auto">
-                                        <div class="card" style="width: 15rem;">
-                                            <img class="card-img-top" src="{% if individual_obj.criminal_img.url %}{{ individual_obj.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ individual_obj.criminal_name }}</h5>
-                                            </div>
-                                            <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">{{ individual_obj.criminal_nid }}</li>
-                                            </ul>
-                                            <div class="card-body">
-                                                <span>Percentage of matching: </span>
+
+                                {% elif user.roles == 'User' and case_info.case_status == 'Accepted' %}
+                                    {% if potential_suspects %}
+                                        {% for obj in potential_suspects %}
+                                            {% for individual_obj in obj %}
+                                                <div class="col my-auto" style="margin: 2%;">
+                                                    <div class="card" style="width: 15rem;">
+                                                        <img class="card-img-top" src="{% if individual_obj.criminal_img.url %}{{ individual_obj.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">{{ individual_obj.criminal_name }}</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <br>
+                                                            <a href="{% url 'fircomplete' case_info.id user.id individual_obj.id %}" class="btn btn-success" >Accept</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
                                                 <br>
-                                                <a href="{% url 'fircomplete' case_info.id user.id individual_obj.id %}" class="btn btn-success" >Accept</a>
-                                            </div>
+                                        {% endfor %}
+                                        <p>Select an unknown criminal</p>
+                                        <a href="{% url 'fircomplete' case_info.id user.id %}" class="btn btn-success">Accept</a>
+                                    {% endif %}
+                                {% elif user.roles == 'User' and case_info.case_status == 'Rejected' or case_info.case_status == 'Completed' %}
+                                    <div class="row">
+                                        <label style="margin-top: 10px; margin-left: 310px;" for="feedback_message">Feedback Message:</label>
+                                        <div class="form-group d-flex justify-content-center">
+                                            <textarea disabled style="width: 600px;" class="form-control" name="feedback_message" id="feedback_message" cols="30" rows="2">{{ case_info.additional_info }}</textarea>
                                         </div>
                                     </div>
-                                    {% endfor %}
-                                    <br>
-                                {% endfor %}
-                            <p>Select an unknown criminal</p>
-                                <a href="{% url 'fircomplete' case_info.id user.id %}" class="btn btn-success">Accept</a>
-                            {% endif %}
-                        {% else %}
-                            {% if criminal_found %}
-                            <div class="col my-auto">
-                                <div class="card" style="width: 15rem;">
-                                    <img class="card-img-top" src="{% if criminal_found.criminal_related.criminal_img.url %}{{ criminal_found.criminal_related.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ criminal_found.criminal_related.criminal_name }}</h5>
+                                {% else %}
+                                    {% if criminal_found %}
+                                    <div class="col my-auto">
+                                        <div class="card" style="width: 15rem;">
+                                            <img class="card-img-top" src="{% if criminal_found.criminal_related.criminal_img.url %}{{ criminal_found.criminal_related.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                            <div class="card-body">
+                                                <h5 class="card-title">{{ criminal_found.criminal_related.criminal_name }}</h5>
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item">{{ criminal_found.criminal_related.criminal_nid }}</li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">{{ criminal_found.criminal_related.criminal_nid }}</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            {% else %}
-                            <p>No criminal Attached</p>
-                            {% endif %}
-                        {% endif %}              
+                                    {% else %}
+                                    <p>No criminal Attached</p>
+                                    {% endif %}
+                                {% endif %}
+                        
                     </div>
                 </div>
             </div>
@@ -420,6 +435,7 @@
                         var result = data[0];
                         var lat = parseFloat(result.lat);
                         var lon = parseFloat(result.lon);
+                        console.log(lat,lon);
                         map.setView([lat, lon], 13); // Center the map on the found coordinates
                         L.marker([lat, lon]).addTo(map); // Add a marker at the found coordinates
                     } else {

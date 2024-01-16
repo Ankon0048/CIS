@@ -30,6 +30,7 @@
     {% block UserDetails %}
     <i class="fa fa-user me-sm-1"></i>
     <span class="d-sm-inline d-none">Admin</span>
+    <input disabled type="text" id="log_admin" value="{{user.id}}">
     {% endblock %}
     
     {% block content %}
@@ -129,6 +130,7 @@
                               <p class="text-xs text-secondary mb-0">{{ case.victim_name.email }}</p>
                               {% else %}
                               <p class="text-xs text-secondary mb-0">Null</p>
+                              <input type="text" id="the_logged_in_user" value="{{ user.id }}" style="display: none;">
                               {% endif %}
                             </div>
                           </div>
@@ -146,7 +148,7 @@
                           <span class="text-secondary text-xs font-weight-bold">{{ case.occurance_date }} - {{ case.occurance_time }}</span>
                         </td>
                         <td class="align-middle">
-                          <a href="{% url 'firinfo' case.id user.id%}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                          <a href="{% url 'firinfo' case.id user.id %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                             Details
                           </a>
                         </td>
@@ -169,5 +171,19 @@
     {% endblock %}
 
     {% block Scripts %}
+
+    <script>
+
+    </script>
+
+    <script>
+      const filter_search = document.getElementById('filter_search_button');
+      filter_search.addEventListener('click', function () {
+        var hiddenUSERID1_no = document.getElementById('log_admin').value;
+        console.log(hiddenUSERID1_no)
+        let strr =   '/search_req_admin/' + hiddenUSERID1_no + '/';
+        window.location.href = strr;
+      });
+</script>
 
     {% endblock %}

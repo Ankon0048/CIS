@@ -27,6 +27,7 @@ urlpatterns = [
     path('Upload_Victim_Record/',views.upload_victim_record, name="upload_victim_record"),
     path('Upload_WITHNESS_Record/',views.upload_witeness_record, name="upload_witeness_record"),
     path('Upload_Offender_Record/',views.upload_offender_record, name="upload_offender_record"),
+    path('search_req_admin/<int:admin_id>/', views.goto_admin_search_page, name = "goto_admin_search_page"),
     path('your_complaint_view/',views.pdf_view, name="pdf_view"),
     path('backtohome/<int:criminal_id>/<int:user_id>', views.backtohome, name="backtohome"),
     path('search_req_user/<int:user_id>/', views.goto_search_page, name = "Search_Page"),

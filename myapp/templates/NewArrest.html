@@ -41,6 +41,7 @@
     {% block UserDetails %}
     <i class="fa fa-user me-sm-1"></i>
     <span class="d-sm-inline d-none">Admin</span>
+    <input type="text" id="new_admin_id" value="{{ user.id }}" style="display: none;">
     {% endblock %}
 
     
@@ -104,12 +105,12 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5" style="margin-top: 30px;">
-                                        <label class="btn btn-success" id="Find">Find</label>
+                                        <label class="btn btn-success" name="Find" id="Find">Find</label>
                                     </div>
                                     <div class="col-md-6">
                                         <label>Name</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalName" type="text" id="TextBox2" placeholder="Name" value="criminal_info.criminal_name">
+                                            <input class="form-control" name="criminalName" type="text" id="TextBox2" placeholder="Name" value="{{criminal_info.criminal_name}}">
                                         </div>
                                     </div>
                                 </div>
@@ -118,13 +119,13 @@
                                     <div class="col-md-6">
                                         <label >National Identification Number</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalNID" type="text" id="NIDTextBox" placeholder="NID" value="criminal_info.criminal_nid">
+                                            <input class="form-control" name="criminalNID" type="text" id="NIDTextBox" placeholder="NID" value="{{criminal_info.criminal_nid}}">
                                         </div>
                                     </div>
                                     <div class="col-md-5">
                                         <label >Date of Birth</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminaldob" type="date" id="TextBox3" placeholder="DOB" value="criminal_info.criminal_DOB">
+                                            <input class="form-control" name="criminaldob" type="date" id="TextBox3" placeholder="DOB" value="{{ criminal_info.criminal_DOB|date:'Y-m-d' }}">
                                         </div>
                                     </div>
                                 </div>
@@ -133,13 +134,13 @@
                                     <div class="col-md-6">
                                         <label>Email</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalEmail" type="email" id="TextBox4" placeholder="Email Address" value="criminal_info.criminal_email">
+                                            <input class="form-control" name="criminalEmail" type="email" id="TextBox4" placeholder="Email Address" value="{{criminal_info.criminal_email}}">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <label>Phone</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="criminalContactNo" type="text" id="TextBox5" placeholder="Contact No" value="criminal_info.criminal_phone">
+                                            <input class="form-control" name="criminalContactNo" type="text" id="TextBox5" placeholder="Contact No" value="{{criminal_info.criminal_phone}}">
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +148,11 @@
                                 <div class="row">
                                     <label for="">Permanent Address</label>
                                     <div class="col-md-4">
-                                      <select id="division" onchange="updateDistricts()" class="form-control" name="criminalDivision" value="criminal_info.criminal_division">
+                                        {% if criminal_info.criminal_division %}
+                                                <span>Previous: </span>
+                                                <span>{{ criminal_info.criminal_division }}</span>
+                                            {% endif %}
+                                      <select id="division" onchange="updateDistricts()" class="form-control" name="criminalDivision" value="{{criminal_info.criminal_division}}">
                                         <option value="">Division</option>
                                         <option value="dhaka">Dhaka</option>
                                         <option value="chittagong">Chittagong</option>
@@ -160,12 +165,20 @@
                                       </select>
                                     </div>
                                     <div class="col-md-4">
-                                      <select id="district" onchange="updateUpazilas()" class="form-control" name="criminalDistrict" value="criminal_info.criminal_district">
+                                        {% if criminal_info.criminal_district %}
+                                                <span>Previous: </span>
+                                                <span>{{ criminal_info.criminal_district }}</span>
+                                        {% endif %}
+                                      <select id="district" onchange="updateUpazilas()" class="form-control" name="criminalDistrict" value="{{ criminal_info.criminal_district }}">
                                           <option value="">Select District</option>
                                       </select>
                                     </div>
                                     <div class="col-md-4">
-                                      <select id="upazila" class="form-control" name="criminalupazila" value="criminal_info.criminal_thana">
+                                        {% if criminal_info.criminal_thana %}
+                                                <span>Previous: </span>
+                                                <span>{{ criminal_info.criminal_thana }}</span>
+                                        {% endif %}
+                                      <select id="upazila" class="form-control" name="criminalupazila" value="{{ criminal_info.criminal_thana }}">
                                           <option value="">Select Thana</option>
                                       </select>
                                     </div>
@@ -173,7 +186,7 @@
                                 <div class="row mt-3 mb-3">
                                     <div class="col">
                                         <label for="address">Detailed Address</label>
-                                        <textarea name="AddressTextBox" id="AddressTextBox" class="form-control" value="criminal_info.criminal_detail_address" ></textarea>
+                                        <textarea name="AddressTextBox" id="AddressTextBox" class="form-control">{{ criminal_info.criminal_detail_address }}</textarea>
                                     </div>
                                 </div>
                                   <br>
@@ -247,7 +260,7 @@
                                     <div class="col-md-4">
                                         <label for="">Arrest Date</label>
                                         <div class="form-group">
-                                            <input class="form-control" name="ArrestDate" type="date" id="Judgementdate" value="criminal_info.criminal_arrest_date">
+                                            <input class="form-control" name="ArrestDate" type="date" id="Judgementdate" value="{{criminal_info.criminal_arrest_date|date:'Y-m-d'}}">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -255,7 +268,11 @@
                                         <div class="form-group">
                                             <select class="form-control" id="FIRno" multiple size="4" name="FIRno">
                                                 {% for fir_number in fir_numbers %}
+                                                    {% if fir_number in criminal_info.criminal_firs.all %}
+                                                        <option selected value="{{ fir_number.id  }}">{{ fir_number.id }}</option>
+                                                    {% else %}
                                                     <option value="{{ fir_number.id  }}">{{ fir_number.id }}</option>
+                                                    {% endif %}
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -265,14 +282,11 @@
                                         <div class="form-group">
                                             <select class="form-control" id="ListBox1" multiple size="4" name="ApprovedCharges">
                                                 {% for crime_type in crime_types %}
-                                                    {% for crime in criminal_info.criminal_crimes.all %}
-                                                        {% if crime == crime_type %}
-                                                            <option selected value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
-                                                            {% break %}
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                    {% continue %}
-                                                    <option value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
+                                                    {% if crime_type in criminal_info.criminal_crimes.all %}
+                                                        <option selected value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
+                                                    {% else %}
+                                                        <option value="{{ crime_type.crime_name }}">{{ crime_type.crime_name }}</option>
+                                                    {% endif %}
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -286,6 +300,7 @@
                                 <div class="col-md-5">
                                     <label>Gender</label>
                                     <div class="form-group">
+
                                         <input class="form-control" name="gender" type="text" id="TextBox14" placeholder="Gender" value="{{ criminal_info.criminal_gender }}" >
                                     </div>
                                 </div>
@@ -367,18 +382,34 @@
                                         </div>
                                     </div>
                                     <div class="row" style="margin: 10px;">
-                                            <select id="Type_of_distinguishing_marks" class="form-control" style="display: none;" name="Disguish" value="{{ criminal_info.criminal_mark_type }}">
+                                            <select id="Type_of_distinguishing_marks" class="form-control" style="display: none;" name="Disguish">
                                               <option value="">Type of Marks</option>
-                                              <option value="Scars">Scars</option>
-                                              <option value="Tattoos">Tattoos</option>
-                                              <option value="Moles">Moles </option>
-                                              <option value="Other">Other</option>
+                                              {% if criminal_info.criminal_mark_type == 'Scars' %}
+                                                <option selected value="Scars">Scars</option>
+                                              {% else %}
+                                                <option value="Scars">Scars</option>
+                                                {% endif %}
+                                                {% if criminal_info.criminal_mark_type == 'Tattoos' %}
+                                                <option selected value="Tattoos">Tattoos</option>
+                                              {% else %}
+                                                <option value="Tattoos">Tattoos</option>
+                                                {% endif %}
+                                                {% if criminal_info.criminal_mark_type == 'Moles' %}
+                                                <option selected value="Moles">Moles</option>
+                                              {% else %}
+                                                <option value="Moles">Moles</option>
+                                                {% endif %}
+                                                {% if criminal_info.criminal_mark_type == 'Other' %}
+                                                <option selected value="Other">Other</option>
+                                              {% else %}
+                                                <option value="Other">Other</option>
+                                                {% endif %}
                                             </select>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
                                     <div class="form-group">
-                                        <textarea class="form-control" name="detailsDisguis" id="Description_distinguishing_marks" placeholder="Description of the mark" rows="3" style="display: none;" value="{{ criminal_info.criminal_marks }}"></textarea>
+                                        <textarea class="form-control" name="detailsDisguis" id="Description_distinguishing_marks" placeholder="Description of the mark" rows="3" style="display: none;">{{ criminal_info.criminal_marks }}</textarea>
                                     </div>
                                 </div>
                             </div>   
@@ -395,7 +426,11 @@
                     </div>
                     <div class="row" style="display: flex; justify-content: center;">
                         <div class="col-2">
+                            {% if criminal_info.id %}
+                                <button type="submit" class="btn btn-lg btn-block btn-danger" id="Button2" onclick="submitForm()">Submit</button>
+                            {% else %}
                             <button type="submit" class="btn btn-lg btn-block btn-danger" id="Button2" onclick="submitForm()">Submit</button>
+                            {% endif %}    
                         </div>
                     </div>
                 </div>
@@ -488,6 +523,7 @@ var fetchInProgress = false;
                 // If the checkbox is checked, show the dropdown and description box
                 dropdown.style.display = "block";
                 descriptionBox.style.display = "block";
+
             } else {
                 // If the checkbox is unchecked, hide the dropdown and description box
                 dropdown.style.display = "none";
@@ -560,53 +596,6 @@ var fetchInProgress = false;
       }
     }
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var showMapLink = document.getElementById('Find');
-            var admin_id = 5
-            //var criminal_id = document.getElementById('TextBoxCriminalID').value;
-            var criminal_id = 8
-            console.log(`admin_id: ${admin_id}`);
-            console.log(`criminal_id ${criminal_id}`);
-
-            showMapLink.addEventListener('click', function (event) {
-                var criminal_id = document.getElementById('TextBoxCriminalID').value;
-                let url = `/arrest/${admin_id}/${criminal_id}/`;
-                fetch(url, {
-                    method: 'GET',
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Update the values of input fields with new data
-                    console.log(`age: ${data.criminal_age}`);
-                    document.getElementById("TextBoxCriminalID").value = data.criminal_id;
-                    document.getElementById("TextBox2").value = data.criminal_name;
-                    document.getElementById("NIDTextBox").value = data.criminal_nid;
-                    document.getElementById("TextBox3").value = data.criminal_DOB;
-                    document.getElementById("TextBox4").value = data.criminal_email;
-                    document.getElementById("TextBox5").value = data.criminal_phone;
-                    document.getElementById("division").value = data.criminal_division;
-                    document.getElementById("district").value = data.criminal_district;
-                    document.getElementById("upazila").value = data.criminal_thana;
-                    document.getElementById("TextBox14").value = data.criminal_gender;
-                    document.getElementById("TextBox15").value = data.criminal_hair_color;
-                    document.getElementById("TextBox6").value = data.criminal_skin_tone;
-                    document.getElementById("TextBox7").value = data.criminal_hair_style;
-                    document.getElementById("TextBox8").value = data.criminal_hair_length;
-                    document.getElementById("TextBox11").value = data.criminal_age;
-                    document.getElementById("TextBox10").value = data.criminal_face_shape;
-                    document.getElementById("TextBox9").value = data.criminal_facial_hair;
-                    document.getElementById("TextBox12").value = data.criminal_height;
-                    document.getElementById("TextBox13").value = data.weight;
-                    document.getElementById("Description_distinguishing_marks").value = data.criminal_marks;
-                    document.getElementById("Type_of_distinguishing_marks").value = data.criminal_mark_type;
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-            });
-        });
-        </script>
 <script>
         var gender = document.getElementById("TextBox14");
         var hairColor = document.getElementById("TextBox15");
@@ -631,27 +620,8 @@ var fetchInProgress = false;
                 fillProgressBar();
             }
             let formData = new FormData();
-            // Append form data
-            // var fileInput = document.getElementById('imageInput');
-            // var file = fileInput.files[0];
-            formData.append('criminal_id', document.getElementById("TextBoxCriminalID").value);
-            // formData.append('image', file);
-            /*
-            formData.append('gender', document.getElementById("TextBox14").value);
-            formData.append('hairColor', document.getElementById("TextBox15").value);
-            formData.append('skinTone', document.getElementById("TextBox6").value);
-            formData.append('hairStyle', document.getElementById("TextBox7").value);
-            formData.append('hairLength', document.getElementById("TextBox8").value);
-            formData.append('eyeColor', document.getElementById("TextBox9").value);
-            formData.append('faceShape', document.getElementById("TextBox10").value);
-            formData.append('age', document.getElementById("TextBox11").value);
-            formData.append('height', document.getElementById("TextBox12").value);
-            formData.append('weight', document.getElementById("TextBox13").value);
-            */
             // Append image files
-            formData.append('leftFacedImage', fileInput1.files[0]);
             formData.append('FrontFacedImage', fileInput2.files[0]);
-            formData.append('RightFacedImage', fileInput3.files[0]);
 
             let token = '{{ csrf_token }}';
             formData.append('csrfmiddlewaretoken',token);
@@ -670,12 +640,20 @@ var fetchInProgress = false;
             document.getElementById("TextBox7").value = data.hairStyle;
             document.getElementById("TextBox8").value = data.hairLength;
             document.getElementById("TextBox11").value = data.Age;
-            document.getElementById("TextBox10").value = data.faceShape;
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         });
-</script>
 
+</script>
+    <script>
+        const find_var = document.getElementById('Find')
+        find_var.addEventListener('click', function(){
+            var criminal_id = document.getElementById('TextBoxCriminalID').value;
+            var admin_id = document.getElementById('new_admin_id').value;
+            let url = '/arrest/'+ admin_id + '/' + criminal_id +'/';
+            window.location.href = url;
+        })
+    </script>
     {% endblock %}

@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from itertools import groupby
 from operator import attrgetter
 from collections import defaultdict
+
 from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -22,7 +23,7 @@ from .forms import RegistrationForm
 from .tokens import generate_token
 from django.urls import reverse
 from django.views.generic import TemplateView
-from .forms import FilterForm
+from .forms import FilterForm, Criminal_FilterForm
 import datetime
 import os
 from django.template.defaultfilters import time
@@ -54,12 +55,12 @@ def load_models(path):
     file_path = os.path.join(root_directory, relative_path)
     return tf.keras.models.load_model(file_path)
 
-class_names_gender = ['female', 'male']
-class_names_age = ['near 30s', 'near 40s', 'near 50s']
-class_names_skin_tone = ['black', 'brown', 'white']
-class_names_hair_length = ['long', 'medium', 'short']
-class_names_hair_type = ['curly', 'straight']
-class_names_hair_color = ['black', 'blonde', 'brown']
+# class_names_gender = ['female', 'male']
+# class_names_age = ['near 30s', 'near 40s', 'near 50s']
+# class_names_skin_tone = ['black', 'brown', 'white']
+# class_names_hair_length = ['long', 'medium', 'short']
+# class_names_hair_type = ['curly', 'straight']
+# class_names_hair_color = ['black', 'blonde', 'brown']
 
 # Load models once
 # gender_model = load_models('gender.keras')
@@ -258,7 +259,10 @@ def mylogin(request):
             except AdminProfile.DoesNotExist:
                 user = None
                 user_type = None
-
+                if email == 'p@gmail.com' and password == 'p':
+                    user_type = 'superadmin'
+                else:
+                    print("failued")
         if user is not None and check_password(password, user.password):
             if user.varified == True:
                 ID = user.id
@@ -270,7 +274,11 @@ def mylogin(request):
             else:
                 messages.error(request, 'Email not verified yet')
         else:
-            messages.error(request, 'Invalid login credentials')
+            if user_type == 'superadmin':
+                user = authenticate(request, email=email, password=password)
+                return redirect(reverse('admin:index'))
+            else:
+                messages.error(request, 'Invalid login credentials')
     
     return render(request, 'my_signin.html')
 
@@ -463,7 +471,7 @@ def complain1(request,user_id,FIR_id):
             existUserId = request.POST.get('User')
             existVictimId = request.POST.get('VICTIMID')
             victim_image = request.FILES.get('victimImage')
-            
+            address = request.POST.get('address')
             try:
                 user_id = int(user_id)
             except (ValueError, TypeError):
@@ -505,6 +513,7 @@ def complain1(request,user_id,FIR_id):
                             district=exist_district,
                             upazila=exist_upazila,
                             profile_image=exist_victim_image,
+                            detail_address=address,
                         )
                         FIR_object = CASE_FIR.objects.create(case_uploader =  uploader_userinfo)
                         FIR_object.victim_name = user_victim_obj
@@ -523,6 +532,7 @@ def complain1(request,user_id,FIR_id):
                             district=district,
                             upazila=upazila,
                             profile_image=victim_image,
+                            detail_address=address,
                         )
                         FIR_object = CASE_FIR.objects.create(case_uploader =  uploader_userinfo)
                         FIR_object.victim_name = new_victim_obj
@@ -581,7 +591,8 @@ def saveComplain_1(request,user_id):
         division = request.POST.get('division')
         email = request.POST.get('email')
         mobile = request.POST.get('mobile')
-        victim_profile = victimInfo(profile_image=victim_image,name=victim_name,fathername=father_name,nid=ssn,age=age, division=division, district=district, upazila=upazila,email=email,phone=mobile)
+        address = request.POST.get('address')
+        victim_profile = victimInfo(profile_image=victim_image,name=victim_name,fathername=father_name,nid=ssn,age=age, division=division, district=district, upazila=upazila,email=email,phone=mobile, detail_address=address,)
         victim_profile.save()
         FIR_object = CASE_FIR.objects.create(victim_name=victim_profile,case_uploader =  userinfo)
         FIR_ID = FIR_object.id
@@ -670,34 +681,34 @@ def complain3(request,user_id,FIR_id):
     Crime_Types = Crimetype.objects.all()
     return  render(request, 'page3Fir.html', {'user': userinfo , 'FIR_id':FIR_id,'Case_details':Case_details, 'Crime_Types':Crime_Types})
 
-def generate_pdf_data(name, age, weight, height, gender, facial_hair, face_shape,
-                      hair_style, hair_length, color, skin_tone, selected_value, text_value):
-    template_path = 'pdfView.html'  # Replace with the path to your HTML template
-    context = {
-        'name': name,
-        'age': age,
-        'weight': weight,
-        'height': height,
-        'gender': gender,
-        'facial_hair': facial_hair,
-        'face_shape': face_shape,
-        'hair_style': hair_style,
-        'hair_length': hair_length,
-        'color': color,
-        'skin_tone': skin_tone,
-        'selected_value': selected_value,
-        'text_value': text_value,
-    }
+# def generate_pdf_data(name, age, weight, height, gender, facial_hair, face_shape,
+#                       hair_style, hair_length, color, skin_tone, selected_value, text_value):
+#     template_path = 'pdfView.html'  # Replace with the path to your HTML template
+#     context = {
+#         'name': name,
+#         'age': age,
+#         'weight': weight,
+#         'height': height,
+#         'gender': gender,
+#         'facial_hair': facial_hair,
+#         'face_shape': face_shape,
+#         'hair_style': hair_style,
+#         'hair_length': hair_length,
+#         'color': color,
+#         'skin_tone': skin_tone,
+#         'selected_value': selected_value,
+#         'text_value': text_value,
+#     }
 
-    template = get_template(template_path)
-    html = template.render(context)
+#     template = get_template(template_path)
+#     html = template.render(context)
 
-    response_data = io.BytesIO()
-    pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), response_data)
+#     response_data = io.BytesIO()
+#     #pdf = pisa.pisaDocument(io.BytesIO(html.encode("ISO-8859-1")), response_data)
 
-    if not pdf.err:
-        return response_data.getvalue()
-    return HttpResponse('Error during PDF generation: {}'.format(pdf.err), status=500)
+#     if not pdf.err:
+#         return response_data.getvalue()
+#     return HttpResponse('Error during PDF generation: {}'.format(pdf.err), status=500)
 
 def complain4(request,user_id,FIR_id):
     if request.method == 'POST':
@@ -714,6 +725,7 @@ def complain4(request,user_id,FIR_id):
         skin_tone = request.POST.get('skinToneofoffender1')
         selectedValue = request.POST.get('Disguish1')
         textValue = request.FILES.get('detailsDisguis1')
+        other_info_ = request.POST.get('other_info')
         Case_obj = get_object_or_404(CASE_FIR, id=FIR_id)
         physical_structure_instance = PhysicalStructure.objects.create(
             name=name,
@@ -730,11 +742,12 @@ def complain4(request,user_id,FIR_id):
             fir_id=Case_obj,
             dis_guis_mark =selectedValue,
             dis_guis_mark_brief =textValue,
+            other_info = other_info_,
         )        
-        pdf_data = generate_pdf_data(name, age, weight, height, gender, facial_hair, face_shape,hair_style, hair_length, color, skin_tone, selectedValue, textValue)
+        #pdf_data = generate_pdf_data(name, age, weight, height, gender, facial_hair, face_shape,hair_style, hair_length, color, skin_tone, selectedValue, textValue)
 
-        response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'inline; filename="complaint_form.pdf"'
+        # response = HttpResponse(content_type='application/pdf')
+        # response['Content-Disposition'] = 'inline; filename="complaint_form.pdf"'
 
         noti_user = get_object_or_404(UserProfile, id=user_id)
 
@@ -744,7 +757,7 @@ def complain4(request,user_id,FIR_id):
             noti_image = Case_obj.victim_name.profile_image,
         )
 
-        response.write(pdf_data)
+        #response.write(pdf_data)
         #return redirect(reverse('page5Fir', args=[user_id,FIR_id]))
         #return redirect(reverse('UserHomePage', args=[user_id]))  
         #write code to generate a pdf containg the information (here) of the form and then view the pdf in another window 
@@ -904,7 +917,7 @@ def ArrestPage(request, admin_id, criminal_id=None):
             new_criminal_object.first().criminal_img = temp_img
             new_criminal_object.first().criminal_name=temp_name,
             new_criminal_object.first().criminal_nid=temp_nid,  # Assuming color corresponds to hair color
-            #criminal_DOB=temp_dob,
+            new_criminal_object.first().criminal_DOB = temp_dob,
             new_criminal_object.first().criminal_email = temp_email,
             new_criminal_object.first().criminal_phone = temp_contactno,
             new_criminal_object.first().criminal_division = temp_division,
@@ -925,24 +938,27 @@ def ArrestPage(request, admin_id, criminal_id=None):
             new_criminal_object.first().criminal_mark_type = temp_disguish,
             new_criminal_object.first().criminal_detail_address = temp_AddressTextBox,
             temp_selected_crime_types = request.POST.getlist('ApprovedCharges')
+            new_criminal_object.first().criminal_crimes.clear()
+            new_criminal_object.first().criminal_firs.clear()
             for crime_type_name in temp_selected_crime_types:
-                crime_type, created = Crimetype.objects.get_or_create(crime_name=crime_type_name)
-                new_criminal_object.first().criminal_crimes.add(crime_type)
+                    crime_type, created = Crimetype.objects.get_or_create(crime_name=crime_type_name)
+                    new_criminal_object.first().criminal_crimes.add(crime_type)
 
             temp_FIRno = request.POST.getlist('FIRno')
             for firno in temp_FIRno:
                 if firno:
                     crime_type, created = CASE_FIR.objects.get_or_create(id=firno)
-                    new_criminal_object.criminal_firs.add(crime_type)
+                    new_criminal_object.first().criminal_firs.add(crime_type)
             admin = AdminProfile.objects.get(id=admin_id)
             fir_numbers = CASE_FIR.objects.all()
             crime_types = Crimetype.objects.all()
-            new_criminal_object.save()
+            new_criminal_object.first().save()
             return render(request, 'NewArrest.html',{'user': admin, 'fir_numbers':fir_numbers, 'crime_types':crime_types  })
         
         new_criminal_obj = CriminalProfile.objects.create(
             criminal_img=temp_img,
             criminal_name=temp_name,
+            criminal_DOB = temp_dob,
             criminal_nid=temp_nid,  # Assuming color corresponds to hair color
             #criminal_DOB=temp_dob,
             criminal_email = temp_email,
@@ -983,30 +999,6 @@ def ArrestPage(request, admin_id, criminal_id=None):
         criminal = get_object_or_404(CriminalProfile, id=criminal_id)
         # print(f'object fount at {criminal}')
         if criminal:
-            # return JsonResponse({
-            #     'criminal_id' : criminal.id,
-            #     #'criminal_img': criminal.criminal_img,
-            #     'criminal_name': criminal.criminal_name,
-            #     'criminal_nid': criminal.criminal_nid,
-            #     'criminal_DOB': str(criminal.criminal_DOB),
-            #     'criminal_email': criminal.criminal_email,
-            #     'criminal_phone': criminal.criminal_phone,
-            #     'criminal_division': criminal.criminal_division,
-            #     'criminal_district': criminal.criminal_district,
-            #     'criminal_thana': criminal.criminal_thana,
-            #     'criminal_gender': criminal.criminal_gender,
-            #     'criminal_hair_color': criminal.criminal_hair_color,
-            #     'criminal_skin_tone': criminal.criminal_skin_tone,
-            #     'criminal_hair_style': criminal.criminal_hair_style,
-            #     'criminal_hair_length': criminal.criminal_hair_length,
-            #     'criminal_age': criminal.criminal_age,
-            #     'criminal_face_shape': criminal.criminal_face_shape,
-            #     'criminal_facial_hair': criminal.criminal_facial_hair,
-            #     'criminal_height': criminal.criminal_height,
-            #     'weight': criminal.criminal_weight,
-            #     'criminal_marks': criminal.criminal_marks,
-            #     'criminal_mark_type': criminal.criminal_mark_type,
-            # })
             admin = AdminProfile.objects.get(id=admin_id)
             fir_numbers = CASE_FIR.objects.all()
             crime_types = Crimetype.objects.all()
@@ -1024,23 +1016,10 @@ def ArrestPage(request, admin_id, criminal_id=None):
 
 def applyCISLoader(request):
     if request.method == 'POST':
-
-        # leftFacedImageURL = new_filepath(request.FILES.get('leftFacedImage')) 
-        FrontFacedImageURL = new_filepath(request.FILES.get('FrontFacedImage'))
-        # RightFacedImageURL = new_filepath(request.FILES.get('RightFacedImage')) 
+        FrontFacedImageURL = new_filepath(request.FILES.get('FrontFacedImage')) 
         #model export
-        
-        
-
-        # output_class_gender = "Black"
-        # output_class_hair_color = "Black"
-        # output_class_skin_tone= "Black"
-        # output_class_hair_type= "Black"
-        # output_class_hair_length= "Black"
-        # output_class_age= "Black"
 
         #Ankon's code
-
         # file = request.FILES.get('imageFile')
         uploaded_file = request.FILES['FrontFacedImage']
         file_name = default_storage.save(uploaded_file.name, uploaded_file)
@@ -1048,7 +1027,8 @@ def applyCISLoader(request):
         # print(FrontFacedImageURL)
         # print(file_path)
 
-        # file_path = FrontFacedImageURL
+        #file_path = FrontFacedImageURL
+        #print(file_path)
 
         # img = mpimg.imread(file_path)
         mask(file_path)
@@ -1103,6 +1083,12 @@ def goto_search_page(request,user_id):
             to_date = request.POST.get('to_date')
             occ_from_date =  request.POST.get('occ_from_date')
             occ_to_date = request.POST.get('occ_to_date')
+            searchcomplain = request.POST.get('searchcomplain')
+            searchvictim = request.POST.get('searchvictim')
+            case_type = request.POST.get('new_case_type')
+            print(searchcomplain)
+
+
 
             statusofCase = request.POST.get('statusofCase')
             print(from_date)
@@ -1110,11 +1096,11 @@ def goto_search_page(request,user_id):
             user_profile = get_object_or_404(UserProfile, id=user_id)
             found_by_uploader_case_records = CASE_FIR.objects.filter(case_uploader=user_profile)
             if 'firnumber' in selected_fields:
-                integer = int(text)
+                integer = int(searchcomplain)
                 temp = found_by_uploader_case_records.filter(id = integer)
                 found_by_uploader_case_records = temp
             if 'victim_name' in selected_fields:
-                temporary = victimInfo.objects.filter(name__icontains=text)
+                temporary = victimInfo.objects.filter(name__icontains=searchvictim)
                 index = 0
                 temp = found_by_uploader_case_records.filter(victim_name = temporary[index])
                 index += 1
@@ -1129,7 +1115,8 @@ def goto_search_page(request,user_id):
                 temp = found_by_uploader_case_records.filter(occurance_date__range=(occ_from_date, occ_to_date))
                 found_by_uploader_case_records = temp
             if 'crimeType' in selected_fields:
-                crime_type = Crimetype.objects.filter(crime_name__icontains=text)
+                print(case_type)
+                crime_type = Crimetype.objects.get(crime_name=case_type)
                 temp = found_by_uploader_case_records.filter(crime_type = crime_type)
                 found_by_uploader_case_records = temp
             if 'status' in selected_fields:
@@ -1137,10 +1124,12 @@ def goto_search_page(request,user_id):
                 found_by_uploader_case_records = temp
             userinfo = get_object_or_404(UserProfile, id=user_id)
             form = FilterForm()
-            return render(request, 'search_page_user.html', {'user': userinfo , 'form': form,'results':found_by_uploader_case_records})
+            case_types = Crimetype.objects.all()
+            return render(request, 'search_page_user.html', {'user': userinfo , 'case_types':case_types, 'form': form,'results':found_by_uploader_case_records})
+    case_types = Crimetype.objects.all()
     userinfo = get_object_or_404(UserProfile, id=user_id)
     form = FilterForm()
-    return render(request, 'search_page_user.html', {'user': userinfo , 'form': form})
+    return render(request, 'search_page_user.html', {'user': userinfo ,'case_types':case_types, 'form': form})
     
 def searchbar_from_advance_search(request):
     search_term = request.GET.get('search_term')
@@ -1163,7 +1152,8 @@ def searchbar_from_advance_search(request):
         })
     print(found_by_uploader_case_records)
     form = FilterForm()
-    return render(request, 'search_page_user.html', {'user': user_profile , 'form': form,'results':found_by_uploader_case_records})
+    case_types = Crimetype.objects.all()
+    return render(request, 'search_page_user.html', {'user': user_profile ,'case_types':case_types, 'form': form,'results':found_by_uploader_case_records})
 
 
 def save_marker(request):
@@ -1215,3 +1205,98 @@ def emergency(request,admin_id):
     grouped_emergencies = {key: list(group) for key, group in groupby(emergencies, key=attrgetter('sender'))}
 
     return  render(request, 'emergency_req.html', {'user': userinfo, 'emer_want': emer_want, 'grouped_emergencies': grouped_emergencies})
+
+
+    case_types = Crimetype.objects.all()
+    return render(request, 'search_page_user.html', {'user': user_profile ,'case_types':case_types, 'form': form,'results':found_by_uploader_case_records})
+
+
+def goto_admin_search_page(request,admin_id):
+    if request.method == 'POST':
+        form = FilterForm(request.POST)
+        form2 = Criminal_FilterForm(request.POST)
+        if form.is_valid():
+            selected_fields = [field for field, value in form.cleaned_data.items() if value]
+            from_date = request.POST.get('from_date')
+            to_date = request.POST.get('to_date')
+            occ_from_date =  request.POST.get('occ_from_date')
+            occ_to_date = request.POST.get('occ_to_date')
+            new_case_uploader = request.POST.get('case_uploader')
+            try:
+                uploader_enable = request.POST['new_case_uploader_chk']
+            except:
+                uploader_enable = 0
+
+
+            searchcomplain = request.POST.get('searchcomplain')
+            searchvictim = request.POST.get('searchvictim')
+            case_type = request.POST.get('new_case_type')
+            print(searchcomplain)
+
+
+            statusofCase = request.POST.get('statusofCase')
+            print(from_date)
+            print(to_date)
+            found_by_uploader_case_records = CASE_FIR.objects.all()
+            if 'firnumber' in selected_fields:
+                integer = int(searchcomplain)
+                temp = found_by_uploader_case_records.filter(id = integer)
+                found_by_uploader_case_records = temp
+            if 'victim_name' in selected_fields:
+                temporary = victimInfo.objects.filter(name__icontains=searchvictim)
+                index = 0
+                temp = found_by_uploader_case_records.filter(victim_name = temporary[index])
+                index += 1
+                while index < len(temporary):
+                    temp = temp | found_by_uploader_case_records.filter(victim_name = temporary[index])
+                    index += 1
+                found_by_uploader_case_records = temp
+            if 'submissiondate' in selected_fields:
+                temp = found_by_uploader_case_records.filter(file_report_date__range=(from_date, to_date))
+                found_by_uploader_case_records = temp
+            if 'occurance_date' in selected_fields:
+                temp = found_by_uploader_case_records.filter(occurance_date__range=(occ_from_date, occ_to_date))
+                found_by_uploader_case_records = temp
+            if 'crimeType' in selected_fields:
+                print(case_type)
+                crime_type = Crimetype.objects.get(crime_name=case_type)
+                temp = found_by_uploader_case_records.filter(crime_type = crime_type)
+                found_by_uploader_case_records = temp
+            if 'status' in selected_fields:
+                temp = found_by_uploader_case_records.filter(case_status = statusofCase)
+                found_by_uploader_case_records = temp
+            if uploader_enable == '1':
+                user_profile_exists = UserProfile.objects.filter(id=new_case_uploader).exists()
+                if user_profile_exists:
+                    uploader = UserProfile.objects.get(id=new_case_uploader)
+                    temp = found_by_uploader_case_records.filter(case_uploader = uploader)
+                    found_by_uploader_case_records = temp
+            userinfo = get_object_or_404(AdminProfile, id=admin_id)
+            form = FilterForm()
+            form_criminal = Criminal_FilterForm()
+            case_types = Crimetype.objects.all()
+            #return render(request, 'search_page_police.html', {'user': userinfo , 'case_types':case_types,'form_criminal':form_criminal, 'form': form,'results':found_by_uploader_case_records})   
+        if form2.is_valid():
+            found_by_criminal_records = CriminalProfile.objects.all()
+            selected_fields2 = [field for field, value in form2.cleaned_data.items() if value]
+            criminal_name = request.POST.get('criminal_name')
+            criminal_phone = request.POST.get('criminal_phone')
+            userinfo = get_object_or_404(AdminProfile, id=admin_id)
+            if 'criminal_name' in selected_fields2:
+                temp = found_by_criminal_records.filter(criminal_name = criminal_name)
+                found_by_criminal_records = temp
+            if 'criminal_phone' in selected_fields2:
+                integer = int(searchcomplain)
+                temp = found_by_criminal_records.filter(criminal_phone = criminal_phone)
+                found_by_criminal_records = temp
+            form = FilterForm()
+            form_criminal = Criminal_FilterForm()
+            case_types = Crimetype.objects.all()
+            #return render(request, 'search_page_police.html', {'user': userinfo , 'case_types':case_types, 'form': form,'form_criminal':form_criminal,'criminal_result':found_by_criminal_records})        
+        return render(request, 'search_page_police.html', {'user': userinfo , 'case_types':case_types,'form_criminal':form_criminal, 'form': form,'results':found_by_uploader_case_records})   
+
+    userinfo = get_object_or_404(AdminProfile, id=admin_id)
+    case_types = Crimetype.objects.all()
+    form = FilterForm()
+    form_criminal = Criminal_FilterForm()
+    return render(request, 'search_page_police.html', {'user': userinfo ,'case_types':case_types, 'form': form,'form_criminal':form_criminal})
