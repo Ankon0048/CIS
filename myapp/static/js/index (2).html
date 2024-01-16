@@ -48,6 +48,10 @@
             districtSelect.innerHTML = "<option value=''>Select a district</option>";
             upazilaSelect.innerHTML = "<option value=''>Select an upazila</option>";
 
+            console.log(`${selectedDivision}`);
+            console.log(`${districtOptions[selectedDivision]}`);
+
+
             if (selectedDivision && districtOptions[selectedDivision]) {
                 // Populate district options based on the selected division
                 districtOptions[selectedDivision].forEach(district => {
@@ -66,6 +70,9 @@
 
             // Clear existing upazila options
             upazilaSelect.innerHTML = "<option value=''>Select an upazila</option>";
+
+            console.log(`${selectedDistrict}`);
+            console.log(`${upazilaOptions[selectedDistrict]}`);
 
             if (selectedDistrict && upazilaOptions[selectedDistrict]) {
                 // Populate upazila options based on the selected district

@@ -156,6 +156,10 @@ def firinfo(request,fir_id,admin_id):
         admin_info = UserProfile.objects.filter(id=admin_id)
         if case_info.case_status == 'Accepted':
             objs = filtering(fir_id)
+            print(len(objs))
+            percentages = ["100%", "88%", "76%", "64%", "52%", "48%"]
+            zipped_data = (objs, percentages)
+            print(len(zipped_data))
             # count = 0
             # for obj in objs:
             #     count += 1
@@ -176,6 +180,7 @@ def fircomplete(request,fir_id,admin_id,criminal_id=None):
     case_info.case_status = 'On Going'
     case_info.save()
     print(f'criminal_id is {criminal_id}')
+    percentages = ["100%", "88%", "76%", "64%", "52%", "48%", "36%", "22%", "10%"]
     if criminal_id:
         criminal_infos = CriminalProfile.objects.get(id=criminal_id)
         fir_criminal_relation = FIR_CRIMINAL.objects.create(
