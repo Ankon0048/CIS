@@ -443,120 +443,33 @@
             </h2>
           </div>
           <div class="four-item-carousel owl-carousel owl-theme owl-dots-none">
+            {% for svc in svc_list %}
             <div class="project-block-one">
               <div class="inner-box p_relative d_block">
                 <figure class="image-box p_relative d_block">
                   <img
-                    src="{% static 'images/project/police_complaint.jpeg' %}"
+                    src="{% if svc.image %}{{ svc.image.url }}{% else %}{% static 'images/project/police_complaint.jpeg' %}{% endif %}"
                     alt=""
                   />
                   <h2
                     class="fs_100 lh_100 fw_light color_white p_absolute z_2 tran_5"
                   >
-                    01
+                    {{ forloop.counter }}
                   </h2>
                 </figure>
                 <div class="text p_relative d_block pt_40">
                   <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
                     <a
-                      href="{% url 'HOME' %}"
+                      href=""
                       class="p_relative d_iblock color_black"
-                      >File a Police Report
+                      >{{svc.name}} 
+                      <!-- File a Police Report -->
                     </a>
                   </h3>
                 </div>
               </div>
             </div>
-            <div class="project-block-one">
-              <div class="inner-box p_relative d_block">
-                <figure class="image-box p_relative d_block">
-                  <img src="{% static 'images/project/chat.jpg' %}" />
-                  <h2
-                    class="fs_100 lh_100 fw_light color_white p_absolute z_2 tran_5"
-                  >
-                    02
-                  </h2>
-                </figure>
-                <div class="text p_relative d_block pt_40">
-                  <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
-                    <a
-                      href="{% url 'HOME' %}"
-                      class="p_relative d_iblock color_black"
-                      >Anonymous Live Chat</a
-                    >
-                  </h3>
-                </div>
-              </div>
-            </div>
-            <div class="project-block-one">
-              <div class="inner-box p_relative d_block">
-                <figure class="image-box p_relative d_block">
-                  <img src="{% static 'images/project/jail.jpg' %}" alt="" />
-                  <h2
-                    class="fs_100 lh_100 fw_light color_white p_absolute z_2 tran_5"
-                  >
-                    03
-                  </h2>
-                </figure>
-                <div class="text p_relative d_block pt_40">
-                  <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
-                    <a
-                      href="{% url 'HOME' %}"
-                      class="p_relative d_iblock color_black"
-                      >Identification Of Criminal</a
-                    >
-                  </h3>
-                </div>
-              </div>
-            </div>
-            <div class="project-block-one">
-              <div class="inner-box p_relative d_block">
-                <figure class="image-box p_relative d_block">
-                  <img
-                    src="{% static 'images/project/permission.jpeg' %}"
-                    alt=""
-                  />
-                  <h2
-                    class="fs_100 lh_100 fw_light color_white p_absolute z_2 tran_5"
-                  >
-                    04
-                  </h2>
-                </figure>
-                <div class="text p_relative d_block pt_40">
-                  <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
-                    <a
-                      href="{% url 'HOME' %}"
-                      class="p_relative d_iblock color_black"
-                      >Police Permission</a
-                    >
-                  </h3>
-                </div>
-              </div>
-            </div>
-            <div class="project-block-one">
-              <div class="inner-box p_relative d_block">
-                <figure class="image-box p_relative d_block">
-                  <img
-                    src="{% static 'images/project/pay money.jpeg' %}"
-                    alt=""
-                  />
-                  <h2
-                    class="fs_100 lh_100 fw_light color_white p_absolute z_2 tran_5"
-                  >
-                    05
-                  </h2>
-                </figure>
-                <div class="text p_relative d_block pt_40">
-                  <h3 class="p_relative d_block fs_24 lh_30 fw_sbold">
-                    <a
-                      href="{% url 'HOME' %}"
-                      class="p_relative d_iblock color_black"
-                      >Pay Fines</a
-                    >
-                  </h3>
-                </div>
-              </div>
-            </div>
+            {% endfor %}
           </div>
         </div>
       </section>
@@ -581,105 +494,42 @@
             <div
               class="single-item-carousel owl-carousel owl-theme owl-nav-none"
             >
-              <div class="testimonial-content">
-                <div
-                  class="text p_relative d_block pt_45 pr_100 pb_45 pl_100 mb_55"
-                >
-                  <div class="shape p_absolute"></div>
-                  <p class="fs_24 lh_38 color_white">
-                    I am immensely pleased to heartily welcome all to the
-                    webpage of Criminal Identification System. This originally
-                    created to serve the interests of the colonial authority of
-                    the far past. I believe this System will open up a new
-                    avenue for us to reach our goal. I wish this System a grand
-                    success.
-                  </p>
-                </div>
-                <div class="quote p_relative d_block fs_60 lh_60 mb_40">
-                  <i class="fa-solid fa-quote-right"></i>
-                </div>
-                <div class="author-box p_relative d_iblock pl_75 pt_3 pb_9">
-                  <figure
-                    class="author-thumb p_absolute l_0 t_0 w_60 h_60 b_radius_50"
-                  >
-                    <img
-                      src="{% static 'images/resource/superPolice.png' %}"
-                      alt=""
-                    />
-                  </figure>
-                  <h5 class="d_block fs_18 lh_25 color_white fw_bold mb_3">
-                    Chowdhury Abdullah Al-Mamun BPM (Bar), PPM
-                  </h5>
-                  <span
-                    class="designation p_relative d_block fs_14 lh_20 color_white"
-                    >Inspector General of Bangladesh</span
-                  >
-                </div>
+            {% for igps in igps_list %}
+            <div class="testimonial-content">
+              <div
+                class="text p_relative d_block pt_45 pr_100 pb_45 pl_100 mb_55"
+              >
+                <div class="shape p_absolute"></div>
+                <p class="fs_24 lh_38 color_white">
+                  {{igps.Message}}
+                </p>
               </div>
-              <div class="testimonial-content">
-                <div
-                  class="text p_relative d_block pt_45 pr_100 pb_45 pl_100 mb_55"
-                >
-                  <div class="shape p_absolute"></div>
-                  <p class="fs_24 lh_38 color_white">
-                    Thanks for Creating this state-of-the-art online platform
-                    designed to bolster the efficiency and effectiveness of our
-                    police force.
-                  </p>
-                </div>
-                <div class="quote p_relative d_block fs_60 lh_60 mb_40">
-                  <i class="fa-solid fa-quote-right"></i>
-                </div>
-                <div class="author-box p_relative d_iblock pl_75 pt_3 pb_9">
-                  <figure
-                    class="author-thumb p_absolute l_0 t_0 w_60 h_60 b_radius_50"
-                  >
-                    <img
-                      src="{% static 'images/resource/policeSuparAmerica.png' %}"
-                      alt=""
-                    />
-                  </figure>
-                  <h5 class="d_block fs_18 lh_25 color_white fw_bold mb_3">
-                    Michael Sullivan​
-                  </h5>
-                  <span
-                    class="designation p_relative d_block fs_14 lh_20 color_white"
-                    >Interim Police ​Chief of USA</span
-                  >
-                </div>
+              <div class="quote p_relative d_block fs_60 lh_60 mb_40">
+                <i class="fa-solid fa-quote-right"></i>
               </div>
-              <div class="testimonial-content">
-                <div
-                  class="text p_relative d_block pt_45 pr_100 pb_45 pl_100 mb_55"
+              <div class="author-box p_relative d_iblock pl_75 pt_3 pb_9">
+                <figure
+                  class="author-thumb p_absolute l_0 t_0 w_60 h_60 b_radius_50"
                 >
-                  <div class="shape p_absolute"></div>
-                  <p class="fs_24 lh_38 color_white">
-                    Thanks for developing such a cutting-edge online platform
-                    designed to enhance the police force and the community. Thus
-                    increasing the communication.
-                  </p>
-                </div>
-                <div class="quote p_relative d_block fs_60 lh_60 mb_40">
-                  <i class="fa-solid fa-quote-right"></i>
-                </div>
-                <div class="author-box p_relative d_iblock pl_75 pt_3 pb_9">
-                  <figure
-                    class="author-thumb p_absolute l_0 t_0 w_60 h_60 b_radius_50"
+                  <img
+                    src="{% if igps.image %}{{ igps.image.url }}{% else %}{% static 'images/resource/superPolice.png' %}{% endif %}"
+                    alt=""
+                  />
+                </figure>
+                <h5 class="d_block fs_18 lh_25 color_white fw_bold mb_3">
+                  {{igps.Igps}} 
+                  <!-- Chowdhury Abdullah Al-Mamun BPM (Bar), PPM -->
+                </h5>
+                <span
+                  class="designation p_relative d_block fs_14 lh_20 color_white"
                   >
-                    <img
-                      src="{% static 'images/resource/policeSuperRussia.jpg' %}"
-                      alt=""
-                    />
-                  </figure>
-                  <h5 class="d_block fs_18 lh_25 color_white fw_bold mb_3">
-                    Arkady Gostev
-                  </h5>
-                  <span
-                    class="designation p_relative d_block fs_14 lh_20 color_white"
-                    >deputy chief of police Russia</span
-                  >
-                </div>
+                  {{igps.From}}
+                  <!-- Inspector General of Bangladesh -->
+                  </span
+                >
               </div>
+            </div>
+            {% endfor %}
             </div>
           </div>
         </div>
@@ -709,6 +559,7 @@
                         <img
                           src="{% static 'images/resource/detactive.jpg' %}"
                           alt=""
+                          style="opacity: 15%;"
                         />
                       </figure>
                       <div id="policesection" class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
@@ -719,10 +570,13 @@
                             >Investigator</a
                           >
                         </h3>
-                        <p style="color: black; margin: 10px;">1)Admin will be appointed by superadmin per thana</p>
-                        <p style="color: black; margin: 10px;">2)Admin will accept and update charge sheets</p>
+                        {% for ins in ins_list %}
+                          <p style="color: black; margin: 10px;">{{ins.role}}</p>
+                        {% endfor %}
+
+                        <!-- <p style="color: black; margin: 10px;">1)Admin will be appointed by superadmin per thana 2)Admin will accept and update charge sheets</p>
                         <p style="color: black; margin: 10px;">3)Admin will react to emergency requests</p>
-                        <p style="color: black; margin: 10px;">4)Admin will see details of charge sheet and criminal records</p>
+                        <p style="color: black; margin: 10px;">4)Admin will see details of charge sheet and criminal records</p> -->
                       </div>
                     </div>
                   </div>
@@ -736,6 +590,7 @@
                         <img
                           src="{% static 'images/resource/peoples.jpg' %}"
                           alt=""
+                          style="opacity: 30%;"
                         />
                       </figure>
                       <div id="usersection" class="text p_absolute pt_35 pr_15 pb_35 pl_15 bg_white tran_5" style="height: 90%; opacity: 70%;">
@@ -746,10 +601,9 @@
                             >Common People</a
                           >
                         </h3>
-                        <p style="color: black; margin: 10px;">1)First create an account</p>
-                        <p style="color: black; margin: 10px;">2)Then You can log in and file a Charge Sheet</p>
-                        <p style="color: black; margin: 10px;">3)You can give a description and can also identify suspects</p>
-                        <p style="color: black; margin: 10px;">4)Keep Track of your complain from the dashboard</p>
+                        {% for pub in pub_list %}
+                          <p style="color: black; margin: 10px;">{{pub.role}}</p>
+                        {% endfor %}
                       </div>
                     </div>
                   </div>
@@ -832,10 +686,17 @@
                         onmouseout="start()"
                       >
                       {% for notice in notices %}
+                          <h6>
+                              <a href="{% url 'download_pdf' notice.id %}" target="_blank">
+                                  {{ notice.title }} <span class="pdf-icon">📄</span>
+                              </a>
+                          </h6>
+                      {% endfor %}
+                      <!-- {% for notice in notices %}
                         <h6>
                           <a href="{{ notice.pdf }}">{{ notice.title }} <span class="pdf-icon">📄</span></a>
                         </h6>
-                        {% endfor %}
+                        {% endfor %} -->
                       </marquee>
                     </div>
                   </div>

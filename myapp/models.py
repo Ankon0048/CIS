@@ -16,6 +16,34 @@ def filepath(request,filename):
 
 # Create your models here.
 
+class ServicesOfPolice(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to=filepath, null=True, blank=True)
+    def __str__(self):
+        return self.name
+
+class publicRoles(models.Model):
+    role = models.CharField(max_length=200)
+    def __str__(self):
+        return self.role
+
+class InvestigatorRoles(models.Model):
+    role = models.CharField(max_length=200)
+    def __str__(self):
+        return self.role
+
+class IGPS(models.Model):
+    Igps = models.CharField(max_length=200)
+    Message = models.CharField(max_length=400)
+    From = models.CharField(max_length=300)
+    image = models.ImageField(upload_to=filepath, null=True, blank=True)
+    def __str__(self):
+        return self.Igps
+
+class TandC(models.Model):
+    Term = models.CharField(max_length=200)
+    def __str__(self):
+        return self.Term
 
 class UserTable(models.Model):
     name = models.CharField(max_length=200)

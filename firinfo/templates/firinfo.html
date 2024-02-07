@@ -351,11 +351,31 @@
                                         </button>
                                     </div>
                                 {% elif case_info.case_status == 'On Going' %}
-                                    <div class="col text-center " style="margin-top: 20px;">
-                                        <button type="submit" name="stat-btn" value="complete" class="btn btn-info m-auto">
-                                            Complete
-                                        </button>
+                                {% if criminal_found %}
+                                <div class="col my-auto">
+                                    <div class="card" style="width: 15rem;">
+                                        <img class="card-img-top" src="{% if criminal_found.criminal_img.url %}{{ criminal_found.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ criminal_found.criminal_name }}</h5>
+                                        </div>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">{{ criminal_found.criminal_nid }}</li>
+                                        </ul>
                                     </div>
+                                </div>
+                                <div class="col text-center " style="margin-top: 20px;">
+                                    <button type="submit" name="stat-btn" value="complete" class="btn btn-info m-auto">
+                                        Complete
+                                    </button>
+                                </div>
+                                {% else %}
+                                <p>No criminal Attached</p>
+                                <div class="col text-center " style="margin-top: 20px;">
+                                    <button type="submit" name="stat-btn" value="complete" class="btn btn-info m-auto">
+                                        Complete
+                                    </button>
+                                </div>
+                                {% endif %}
                                 {% endif %}
                             </div>
                         </form>
@@ -364,10 +384,15 @@
                                 {% if potential_suspects %}
                                 <div class="row">
                                     {% for obj in potential_suspects %}
-                                        {{forloop.counter}}
+                                        
+                                        <div class="row my-2">
+                                            <div class="pt-1 pb-1 mb-2" style="border: 1px solid black; font-size: 24px; font-weight: 500;">
+                                            {{forloop.counter}}
+                                            </div>
                                         {% for individual_obj in obj %}
-                                            <div style="border: 5px solid black;" class="col-md-4 my-3">
-                                                <div class="card h-50 w-50">
+                                      
+                                            <div style="border: 2px solid black;" class="col-md-4 ">
+                                                <div class="card h-50 w-50 m-auto">
                                                     <img class="card-img-top" 
                                                          src="{% if individual_obj.criminal_img.url %}{{ individual_obj.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" 
                                                          alt="Criminal Image"
@@ -380,7 +405,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            
                                         {% endfor %}
+                                        </div>
                                     {% endfor %}
                                 </div>
                                 <p class="mt-4">Select an unknown criminal</p>
@@ -394,16 +421,17 @@
                                             <textarea disabled style="width: 600px;" class="form-control" name="feedback_message" id="feedback_message" cols="30" rows="2">{{ case_info.additional_info }}</textarea>
                                         </div>
                                     </div>
+                                    
                                 {% else %}
                                     {% if criminal_found %}
                                     <div class="col my-auto">
                                         <div class="card" style="width: 15rem;">
-                                            <img class="card-img-top" src="{% if criminal_found.criminal_related.criminal_img.url %}{{ criminal_found.criminal_related.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
+                                            <img class="card-img-top" src="{% if criminal_found.criminal_img.url %}{{ criminal_found.criminal_img.url }}{% else %}{% static 'img/criminal/frontside.jpg' %}{% endif %}" alt="Card image cap">
                                             <div class="card-body">
-                                                <h5 class="card-title">{{ criminal_found.criminal_related.criminal_name }}</h5>
+                                                <h5 class="card-title">{{ criminal_found.criminal_name }}</h5>
                                             </div>
                                             <ul class="list-group list-group-flush">
-                                                <li class="list-group-item">{{ criminal_found.criminal_related.criminal_nid }}</li>
+                                                <li class="list-group-item">{{ criminal_found.criminal_nid }}</li>
                                             </ul>
                                         </div>
                                     </div>

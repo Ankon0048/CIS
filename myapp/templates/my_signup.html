@@ -51,10 +51,15 @@
             <form role="form text-left" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row">
-                    <div id="imageContainer" style="cursor: pointer; text-align: center; ">
+                    <!-- <div id="imageContainer" style="cursor: pointer; text-align: center; ">
                         <img width="100px" src="{% static 'images/logo/—Pngtree—vector add icon_4232053.png' %}" id="imgview1" style="border: 1px dotted #1c2247; margin-bottom:5px; border-radius:100%;" onclick="document.getElementById('FileUpload1').click();"/>
                         <input class="form-control" name="profile_image" for="imgview1" type="file" id="FileUpload1" onchange="readURL(this, 'imgview1');" style="display: none;">
-                    </div>
+                    </div> -->
+                    <div id="imageContainer" style="cursor: pointer; text-align: center; padding: 20px;" ondrop="handleDrop(event)" ondragover="handleDragOver(event)">
+                      <p style="margin: revert;">Drag and drop an Profile Image here or click to select one</p>
+                      <img width="100px" src="{% static 'images/logo/—Pngtree—vector add icon_4232053.png' %}" id="imgview1" style="border: 1px dotted #1c2247; margin-bottom:5px; border-radius:100%;" onclick="document.getElementById('FileUpload1').click();"/>
+                      <input class="form-control" name="profile_image" for="imgview1" type="file" id="FileUpload1" onchange="readURL(this, 'imgview1');" style="display: none;">
+                  </div>
                 </div>
               <div class="row">
                 <div class="col-md-6">
@@ -139,10 +144,16 @@
               </div>
 
 
-              <div class="form-check form-check-info text-left">
+              <!-- <div class="form-check form-check-info text-left">
                 <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
                 <label class="form-check-label" for="flexCheckDefault">
                   I agree the <a href="javascript:;" class="text-dark font-weight-bolder">Terms and Conditions</a>
+                </label>
+              </div> -->
+              <div class="form-check form-check-info text-left">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" checked>
+                <label class="form-check-label" for="flexCheckDefault">
+                    I agree the <a href="javascript:;" class="text-dark font-weight-bolder" id="termsLink">Terms and Conditions</a>
                 </label>
               </div>
               <div class="text-center">
@@ -159,6 +170,28 @@
     </div>
   </div>
 </section>
+
+
+<div id="termsModal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title">Terms and Conditions</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body" id="termsContent">
+                {% for term in tandc_list %}
+                  <p>{{ forloop.counter }}. {{ term.Term }}</p>
+                {% endfor %}
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
 {% endblock %}
     
 {% block Scripts %}
@@ -380,5 +413,41 @@ searchButton.addEventListener('click', function() {
             });
       });
 </script>
+
+
+<script>
+  function handleDrop(event) {
+      event.preventDefault();
+
+      var files = event.dataTransfer.files;
+      if (files.length > 0) {
+          var file = files[0];
+          handleFile(file);
+      }
+  }
+
+  function handleDragOver(event) {
+      event.preventDefault();
+  }
+
+  function handleFile(file) {
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+          document.getElementById('imgview1').src = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
+  }
+</script>
+
+<script>
+  document.getElementById('termsLink').addEventListener('click', function() {
+      // Show the modal
+      var termsModal = new bootstrap.Modal(document.getElementById('termsModal'));
+      termsModal.show();
+  });
+</script>
+
 
 {% endblock %}

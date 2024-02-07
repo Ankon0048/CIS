@@ -17,12 +17,13 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from demo import settings
 from django.db.models import Q
-from .models import CriminalProfile,EMERGENCY, Notice,FAQ,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
+from .models import ServicesOfPolice,publicRoles,InvestigatorRoles,IGPS,TandC,CriminalProfile,EMERGENCY, Notice,FAQ,UserNotificationPanel, UserTable, UserProfile, MapMarker, AdminProfile, victimInfo, CASE_FIR, Relation, witnessInfo, Crimetype, PhysicalStructure
 from django.http import JsonResponse
 from .forms import RegistrationForm
 from .tokens import generate_token
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.http import FileResponse
 from .forms import FilterForm, Criminal_FilterForm
 import datetime
 import os
@@ -45,6 +46,17 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from django.core.files.storage import default_storage
 
+
+def handler404(request, exception):
+    return render(request, 'errors/404.html', status=404)
+
+def download_pdf(request, notice_id):
+    notice = get_object_or_404(Notice, pk=notice_id)
+    file_path = notice.pdf.path
+    response = FileResponse(open(file_path, 'rb'))
+    response['Content-Disposition'] = f'attachment; filename="{notice.title}.pdf"'
+    return response
+
 #Ankon's Code starts
 
 img_height, img_width = 224, 224
@@ -55,20 +67,20 @@ def load_models(path):
     file_path = os.path.join(root_directory, relative_path)
     return tf.keras.models.load_model(file_path)
 
-# class_names_gender = ['female', 'male']
-# class_names_age = ['near 30s', 'near 40s', 'near 50s']
-# class_names_skin_tone = ['black', 'brown', 'white']
-# class_names_hair_length = ['long', 'medium', 'short']
-# class_names_hair_type = ['curly', 'straight']
-# class_names_hair_color = ['black', 'blonde', 'brown']
+class_names_gender = ['female', 'male']
+class_names_age = ['near 30s', 'near 40s', 'near 50s']
+class_names_skin_tone = ['black', 'brown', 'white']
+class_names_hair_length = ['long', 'medium', 'short']
+class_names_hair_type = ['curly', 'straight']
+class_names_hair_color = ['black', 'blonde', 'brown']
 
 # Load models once
-# gender_model = load_models('gender.keras')
-# age_model = load_models('age.keras')
-# skin_tone_model = load_models('skin_tone.keras')
-# hair_type_model = load_models('hair_type.keras')
-# hair_color_model = load_models('hair_color.keras')
-# hair_length_model = load_models('hair_length.keras')
+gender_model = load_models('gender.keras')
+age_model = load_models('age.keras')
+skin_tone_model = load_models('skin_tone.keras')
+hair_type_model = load_models('hair_type.keras')
+hair_color_model = load_models('hair_color.keras')
+hair_length_model = load_models('hair_length.keras')
 
 #Ankon's Code ends
 
@@ -130,11 +142,16 @@ def near_stations(request):
     return JsonResponse(response_data)
 
 
+
 # Create your views here.
 def home(request):
+    svc = ServicesOfPolice.objects.all()
     notices = Notice.objects.all()
     faqs = FAQ.objects.all()
-    return render(request, "Welcome_Page.html", {'notices': notices, 'faqs': faqs})
+    igps = IGPS.objects.all()
+    pub = publicRoles.objects.all()
+    ins = InvestigatorRoles.objects.all()
+    return render(request, "Welcome_Page.html", {'notices': notices, 'faqs': faqs,'igps_list':igps,"pub_list":pub,'ins_list':ins,'svc_list':svc})
 
 def users(request):
     if request.method == 'POST':
@@ -182,6 +199,7 @@ def delete_user(request, user_id):
     return JsonResponse({'message': 'Invalid request method.'}, status=400)
 
 def myregister(request):
+    tandc_list  = TandC.objects.all()
     if request.method == 'POST':
         form = RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
@@ -219,13 +237,13 @@ def myregister(request):
                 emailss.fail_silently = True
                 emailss.send()
                 user.save()
-                return render(request, "my_signup.html")
+                return render(request, "my_signup.html",{'TandC': tandc_list})
         else:
             messages.error(request, form.errors)
             print(form.errors)
             print(form.non_field_errors)
         
-    return render(request, "my_signup.html")
+    return render(request, "my_signup.html",{'tandc_list': tandc_list})
 
 
 def activatefunction(request, uidb64, token):
@@ -1045,22 +1063,22 @@ def applyCISLoader(request):
         image_masked = np.expand_dims(image_masked_resized, axis=0)
 
         # Predictions
-        # output_class_gender = class_names_gender[np.argmax(gender_model.predict(image_unmasked))]
-        # output_class_age = class_names_age[np.argmax(age_model.predict(image_unmasked))]
-        # output_class_skin_tone = class_names_skin_tone[np.argmax(skin_tone_model.predict(image_unmasked))]
-        # output_class_hair_type = class_names_hair_type[np.argmax(hair_type_model.predict(image_masked))]
-        # output_class_hair_color = class_names_hair_color[np.argmax(hair_color_model.predict(image_masked))]
-        # output_class_hair_length = class_names_hair_length[np.argmax(hair_length_model.predict(image_masked))]
+        output_class_gender = class_names_gender[np.argmax(gender_model.predict(image_unmasked))]
+        output_class_age = class_names_age[np.argmax(age_model.predict(image_unmasked))]
+        output_class_skin_tone = class_names_skin_tone[np.argmax(skin_tone_model.predict(image_unmasked))]
+        output_class_hair_type = class_names_hair_type[np.argmax(hair_type_model.predict(image_masked))]
+        output_class_hair_color = class_names_hair_color[np.argmax(hair_color_model.predict(image_masked))]
+        output_class_hair_length = class_names_hair_length[np.argmax(hair_length_model.predict(image_masked))]
 
         # Return the updated values in the JSON response
-        # return JsonResponse({
-        #     'gender': output_class_gender,
-        #     'hairColor': output_class_hair_color,
-        #     'skinTone' :output_class_skin_tone,
-        #     'hairStyle' :output_class_hair_type,
-        #     'hairLength' :output_class_hair_length,
-        #     'Age' :output_class_age,
-        # })
+        return JsonResponse({
+            'gender': output_class_gender,
+            'hairColor': output_class_hair_color,
+            'skinTone' :output_class_skin_tone,
+            'hairStyle' :output_class_hair_type,
+            'hairLength' :output_class_hair_length,
+            'Age' :output_class_age,
+        })
     return JsonResponse({'message': 'Invalid request method'}, status=400)
         #form = FirForm(request.POST, request.FILES)
         #print(form.cleaned_data.get('criminal_id'))

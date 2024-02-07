@@ -122,6 +122,8 @@ def firinfo(request,fir_id,admin_id):
     witness_infos = witnessInfo.objects.filter(fir_id=case_info)
     victim_infos = victimInfo.objects.get(id=case_info.victim_name.id)
     physical_structure_infos = PhysicalStructure.objects.get(fir_id=case_info)
+    criminal_infos = FIR_CRIMINAL.objects.get(case_related_id=fir_id)
+    criminal_selected = CriminalProfile.objects.get(id=criminal_infos.criminal_related_id)
     if admin_info:
         if request.method == 'POST':
             custom_message = request.POST.get('feedback_message')
@@ -151,7 +153,7 @@ def firinfo(request,fir_id,admin_id):
                     Title = temp_title,
                 )
             return redirect(reverse('AdminHomePage', args=[admin_id]))
-        return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos })
+        return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos, 'criminal_found': criminal_selected })
     else:
         admin_info = UserProfile.objects.filter(id=admin_id)
         if case_info.case_status == 'Accepted':
@@ -164,8 +166,9 @@ def firinfo(request,fir_id,admin_id):
             # for obj in objs:
             #     count += 1
             # print(f'count is {count}')
-            return render(request, 'firinfo.html', {'user':admin_info[0], 'potential_suspects':objs , 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos })
-    return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos })
+            return render(request, 'firinfo.html', {'user':admin_info[0], 'potential_suspects':objs , 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos, 'criminal_found': criminal_selected })
+    print(criminal_selected.criminal_name)
+    return render(request, 'firinfo.html', {'user':admin_info[0], 'case_info' : case_info,'witness_infos':witness_infos,'victim_infos':victim_infos,'physical_structure_infos':physical_structure_infos, 'criminal_found': criminal_selected})
 
 def applyfir(request, user_id):
     return render(request, 'applyfir.html', {'user_id': user_id})

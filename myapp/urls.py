@@ -1,6 +1,10 @@
 from django.urls import path
 from . import views
 from .views import MapView
+from .views import download_pdf
+from django.conf.urls import handler404
+
+handler404 = views.handler404
 
 urlpatterns = [
     path('', views.home, name = "HOME"),
@@ -33,6 +37,7 @@ urlpatterns = [
     path('search_req_user/<int:user_id>/', views.goto_search_page, name = "Search_Page"),
     path('emergency/<int:admin_id>/', views.emergency, name = "emergency"),
     path('save_marker/', views.save_marker, name = "save_marker"),
+    path('download_pdf/<int:notice_id>/', download_pdf, name='download_pdf'),
     #path('map/', MapView.as_view(), name='map-view'),
 
     path('map/', views.context_date, name='map-view'),
