@@ -75,12 +75,12 @@ class_names_hair_type = ['curly', 'straight']
 class_names_hair_color = ['black', 'blonde', 'brown']
 
 # Load models once
-gender_model = load_models('gender.keras')
-age_model = load_models('age.keras')
-skin_tone_model = load_models('skin_tone.keras')
-hair_type_model = load_models('hair_type.keras')
-hair_color_model = load_models('hair_color.keras')
-hair_length_model = load_models('hair_length.keras')
+# gender_model = load_models('gender.keras')
+# age_model = load_models('age.keras')
+# skin_tone_model = load_models('skin_tone.keras')
+# hair_type_model = load_models('hair_type.keras')
+# hair_color_model = load_models('hair_color.keras')
+# hair_length_model = load_models('hair_length.keras')
 
 #Ankon's Code ends
 
